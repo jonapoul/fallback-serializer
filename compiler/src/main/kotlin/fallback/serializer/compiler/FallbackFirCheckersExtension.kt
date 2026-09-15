@@ -3,6 +3,7 @@ package fallback.serializer.compiler
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
 import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 
@@ -16,6 +17,8 @@ internal class FallbackFirCheckersExtension(session: FirSession) :
           FallbackSerializableChecker,
           FallbackSerializerNameChecker,
         )
+
+      override val propertyCheckers: Set<FirPropertyChecker> = setOf(FallbackTargetChecker)
     }
 
   override fun FirDeclarationPredicateRegistrar.registerPredicates() {

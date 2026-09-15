@@ -32,6 +32,7 @@ internal object FqNames {
 }
 
 internal object ClassIds {
+  val Fallback = ClassId(FqNames.FallbackSerializer, identifier("Fallback"))
   val FallbackEnumSerializer =
     ClassId(FqNames.FallbackSerializer, identifier("FallbackEnumSerializer"))
 
