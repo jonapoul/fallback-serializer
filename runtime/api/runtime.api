@@ -1,0 +1,13 @@
+public abstract interface annotation class fallback/serializer/Fallback : java/lang/annotation/Annotation {
+}
+
+public class fallback/serializer/FallbackEnumSerializer : kotlinx/serialization/KSerializer {
+	public fun <init> (Ljava/lang/String;[Ljava/lang/Enum;Ljava/util/Map;Ljava/lang/Enum;)V
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Enum;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Enum;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun toString ()Ljava/lang/String;
+}
+

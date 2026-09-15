@@ -1,0 +1,135 @@
+name: PR
+
+on:
+  pull_request:
+
+env:
+  CI: true
+  GRADLE_ENCRYPTION_KEY: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: 'ci-${{ github.event.merge_group.head_ref || github.head_ref }}-${{ github.workflow }}'
+  cancel-in-progress: true
+
+jobs:
+  changed-files:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      wrapper: ${{ steps.filter.outputs.wrapper }}
+      shell: ${{ steps.filter.outputs.shell }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
+        id: filter
+        with:
+          filters: |
+            wrapper:
+              - 'gradle/wrapper/**'
+              - 'gradlew'
+              - 'gradlew.bat'
+            shell:
+              - '**/*.sh'
+
+  validate-wrapper:
+    needs: changed-files
+    if: needs.changed-files.outputs.wrapper == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: gradle/actions/wrapper-validation@9c971963bec38e04b3d30dcc455b5382be2fdbfb # v6.3.0
+
+  shellcheck:
+    needs: changed-files
+    if: needs.changed-files.outputs.shell == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - run: shellcheck scripts/*.sh scripts/lib/*.sh
+
+  ktfmt:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/setup-java
+      - run: scripts/ktfmt.sh check --force
+
+  validation:
+    needs: [ changed-files, validate-wrapper, shellcheck, ktfmt ]
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          if [[ "${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}" == "true" ]]; then
+            echo "One or more validation jobs failed or were cancelled"
+            exit 1
+          fi
+
+  tests:
+    needs: validation
+    if: ${{ !cancelled() && needs.validation.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/setup-java
+      - uses: ./.github/actions/setup-gradle
+      - run: ./gradlew check
+      - uses: ./.github/actions/report-build-results
+        if: ${{ !cancelled() }}
+
+  detekt:
+    needs: validation
+    if: ${{ !cancelled() && needs.validation.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/setup-java
+      - uses: ./.github/actions/setup-gradle
+      - run: ./gradlew detektCheck
+      - uses: ./.github/actions/report-build-results
+        if: ${{ !cancelled() }}
+
+  other-checks:
+    needs: validation
+    if: ${{ !cancelled() && needs.validation.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/setup-java
+      - uses: ./.github/actions/setup-gradle
+      - run: ./gradlew -p build-logic check
+      - name: Check generated compiler test suites are up to date
+        run: |
+          ./gradlew :compiler-tests:generateTests
+          if ! git diff --exit-code -- compiler-tests/src/test/java; then
+            echo "::error::generateTests produced changes. Run './gradlew :compiler-tests:generateTests' locally and commit the results."
+            exit 1
+          fi
+      - uses: ./.github/actions/report-build-results
+        if: ${{ !cancelled() }}
+
+  finish:
+    if: ${{ !cancelled() }}
+    needs:
+      - validation
+      - tests
+      - detekt
+      - other-checks
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          if [[ "${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}" == "true" ]]; then
+            echo "One or more jobs failed or were cancelled"
+            exit 1
+          fi

@@ -1,0 +1,24 @@
+// Klib ABI Dump
+// Targets: [iosArm64, iosSimulatorArm64, js, linuxArm64, linuxX64, macosArm64, mingwX64, wasmJs]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <fallback-serializer:runtime>
+open annotation class fallback.serializer/Fallback : kotlin/Annotation { // fallback.serializer/Fallback|null[0]
+    constructor <init>() // fallback.serializer/Fallback.<init>|<init>(){}[0]
+}
+
+open class <#A: kotlin/Enum<#A>> fallback.serializer/FallbackEnumSerializer : kotlinx.serialization/KSerializer<#A> { // fallback.serializer/FallbackEnumSerializer|null[0]
+    constructor <init>(kotlin/String, kotlin/Array<#A>, kotlin.collections/Map<#A, kotlin/String>, #A) // fallback.serializer/FallbackEnumSerializer.<init>|<init>(kotlin.String;kotlin.Array<1:0>;kotlin.collections.Map<1:0,kotlin.String>;1:0){}[0]
+
+    open val descriptor // fallback.serializer/FallbackEnumSerializer.descriptor|{}descriptor[0]
+        open fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // fallback.serializer/FallbackEnumSerializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+    open fun deserialize(kotlinx.serialization.encoding/Decoder): #A // fallback.serializer/FallbackEnumSerializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+    open fun serialize(kotlinx.serialization.encoding/Encoder, #A) // fallback.serializer/FallbackEnumSerializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;1:0){}[0]
+    open fun toString(): kotlin/String // fallback.serializer/FallbackEnumSerializer.toString|toString(){}[0]
+}
+
+final inline fun <#A: reified kotlin/Enum<#A>> fallback.serializer/FallbackEnumSerializer(kotlin/String, #A, kotlin.collections/Map<#A, kotlin/String> = ...): fallback.serializer/FallbackEnumSerializer<#A> // fallback.serializer/FallbackEnumSerializer|FallbackEnumSerializer(kotlin.String;0:0;kotlin.collections.Map<0:0,kotlin.String>){0§<kotlin.Enum<0:0>>}[0]

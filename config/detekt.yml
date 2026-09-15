@@ -1,0 +1,15 @@
+---
+comments:
+  active: false
+
+complexity:
+  active: false
+
+naming:
+  FunctionNameMaxLength:
+    maximumFunctionNameLength: 50
+
+style:
+  RedundantVisibilityModifier:
+    # explicit API mode needs the public modifiers
+    active: false
