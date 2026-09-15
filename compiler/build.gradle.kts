@@ -17,7 +17,7 @@ buildConfig {
     internalVisibility = true
     topLevelConstants = true
   }
-  buildConfigField("String", "PLUGIN_ID", providers.gradleProperty("PLUGIN_ID").map { "\"$it\"" })
+  buildConfigField("PLUGIN_ID", providers.gradleProperty("PLUGIN_ID"))
 }
 
 dependencies {
