@@ -12,6 +12,8 @@ has the user-facing behaviour.
 - `compiler-tests` - tests on JetBrains' compiler test framework.
 - `build-logic` - `fallback.convention`: JDK toolchain from `.java-version`, warnings as errors, and detekt with
   `config/detekt.yml` (adds `detektCheck`).
+- `sample` - separate build that applies the Gradle plugin from this build via `includeBuild("..")`, then runs tests on
+  jvm, js, wasmJs and linuxX64. Checks the generated code on every backend.
 
 `PLUGIN_ID`, `GROUP` and `VERSION_NAME` live in the root `gradle.properties` and reach the code through buildconfig.
 
@@ -23,6 +25,7 @@ has the user-facing behaviour.
 ./gradlew :compiler-tests:test -PupdateTestData    # rewrite expected diagnostics
 ./gradlew :runtime:jvmTest
 ./gradlew -p build-logic check
+./gradlew -p sample check                          # end-to-end tests on every backend
 ./gradlew detektCheck
 scripts/ktfmt.sh                                   # format files changed since main
 ```
