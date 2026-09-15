@@ -1,0 +1,3 @@
+/platform.kt:21:19: error: 'actual enum class Fruit : Enum<Fruit>' has no corresponding members for 'expect' class members:
+
+    expect object FallbackSerializer : FallbackEnumSerializer<Fruit>

@@ -31,6 +31,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
   }
 
   @Test
+  @TestMetadata("ExpectOnlyFallbackEntry.kt")
+  public void testExpectOnlyFallbackEntry() {
+    run("ExpectOnlyFallbackEntry.kt");
+  }
+
+  @Test
   @TestMetadata("FallbackOutsideEnumEntry.kt")
   public void testFallbackOutsideEnumEntry() {
     run("FallbackOutsideEnumEntry.kt");
