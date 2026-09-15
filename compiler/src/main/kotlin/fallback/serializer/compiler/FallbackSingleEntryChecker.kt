@@ -1,11 +1,11 @@
 package fallback.serializer.compiler
 
+import fallback.serializer.compiler.FallbackErrors.MULTIPLE_FALLBACK_ENTRIES
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind.Common
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OTHER_ERROR_WITH_REASON
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
@@ -27,8 +27,9 @@ internal object FallbackSingleEntryChecker : FirClassChecker(Common) {
     for (entry in entries.drop(1)) {
       reporter.reportOn(
         source = entry.source,
-        factory = OTHER_ERROR_WITH_REASON,
-        a = "enum class '$name' can only have one @Fallback entry, '$first' is already annotated",
+        factory = MULTIPLE_FALLBACK_ENTRIES,
+        a = name,
+        b = first,
       )
     }
   }

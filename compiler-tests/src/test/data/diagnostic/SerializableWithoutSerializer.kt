@@ -3,8 +3,8 @@
 import fallback.serializer.Fallback
 import kotlinx.serialization.Serializable
 
-<!OTHER_ERROR_WITH_REASON!>@Serializable
-enum class Fruit {
+@Serializable
+<!MISSING_FALLBACK_SERIALIZER!>enum class Fruit<!> {
   Apple,
   @Fallback Unknown,
-}<!>
+}

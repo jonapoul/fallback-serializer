@@ -7,5 +7,5 @@ import kotlinx.serialization.Serializable
 enum class Fruit {
   Apple,
   @Fallback Unknown,
-  <!OTHER_ERROR_WITH_REASON!>@Fallback Other,<!>
+  @Fallback <!MULTIPLE_FALLBACK_ENTRIES!>Other<!>,
 }

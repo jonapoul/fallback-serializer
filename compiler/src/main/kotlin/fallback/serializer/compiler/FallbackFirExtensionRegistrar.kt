@@ -6,5 +6,6 @@ internal class FallbackFirExtensionRegistrar : FirExtensionRegistrar() {
   override fun ExtensionRegistrarContext.configurePlugin() {
     +::FallbackFirDeclarationGenerationExtension
     +::FallbackFirCheckersExtension
+    registerDiagnosticContainers(FallbackErrors)
   }
 }

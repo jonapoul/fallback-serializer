@@ -1,11 +1,11 @@
 package fallback.serializer.compiler
 
+import fallback.serializer.compiler.FallbackErrors.MISSING_FALLBACK_SERIALIZER
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind.Common
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OTHER_ERROR_WITH_REASON
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
@@ -34,13 +34,10 @@ internal object FallbackSerializableChecker : FirClassChecker(Common) {
         ?.getKClassArgument(Names.With)
     if (serializerType?.classId == classId.createNestedClassId(Names.FallbackSerializer)) return
 
-    val name = classId.shortClassName
     reporter.reportOn(
       source = declaration.source,
-      factory = OTHER_ERROR_WITH_REASON,
-      a =
-        "enum class '$name' has a @Fallback entry, so it must be annotated with @Serializable(with = " +
-          "$name.FallbackSerializer::class)",
+      factory = MISSING_FALLBACK_SERIALIZER,
+      a = classId.shortClassName,
     )
   }
 }

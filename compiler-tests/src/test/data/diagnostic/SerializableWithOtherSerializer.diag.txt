@@ -1,1 +1,1 @@
-/SerializableWithOtherSerializer.kt:17:1: error: Unknown error: enum class 'Fruit' has a @Fallback entry, so it must be annotated with @Serializable(with = Fruit.FallbackSerializer::class).
+/SerializableWithOtherSerializer.kt:18:1: error: Enum class 'Fruit' has a @Fallback entry, so it must be annotated with @Serializable(with = Fruit.FallbackSerializer::class).
