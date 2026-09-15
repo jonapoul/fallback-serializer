@@ -92,7 +92,11 @@ internal class FallbackIrGenerationExtension : IrGenerationExtension {
 
       +irDelegatingConstructorCall(baseConstructor).apply {
         typeArguments[0] = enumType
-        arguments[0] = irString(enumClass.kotlinFqName.asString())
+        arguments[0] =
+          irString(
+            enumClass.getAnnotationArgumentValue<String>(FqNames.SerialName, "value")
+              ?: enumClass.kotlinFqName.asString()
+          )
         arguments[1] = irCall(valuesFunction)
         arguments[2] = valueSerialNames
         arguments[3] = IrGetEnumValueImpl(startOffset, endOffset, enumType, fallback.symbol)

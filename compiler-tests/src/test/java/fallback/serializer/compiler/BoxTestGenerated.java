@@ -25,6 +25,12 @@ public class BoxTestGenerated extends AbstractBoxTest {
   }
 
   @Test
+  @TestMetadata("ClassSerialName.kt")
+  public void testClassSerialName() {
+    run("ClassSerialName.kt");
+  }
+
+  @Test
   @TestMetadata("DecodesKnownEntries.kt")
   public void testDecodesKnownEntries() {
     run("DecodesKnownEntries.kt");
