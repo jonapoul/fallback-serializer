@@ -11,7 +11,7 @@ open annotation class fallback.serializer/Fallback : kotlin/Annotation { // fall
 }
 
 open class <#A: kotlin/Enum<#A>> fallback.serializer/FallbackEnumSerializer : kotlinx.serialization/KSerializer<#A> { // fallback.serializer/FallbackEnumSerializer|null[0]
-    constructor <init>(kotlin/String, kotlin/Array<#A>, kotlin.collections/Map<#A, kotlin/String>, #A) // fallback.serializer/FallbackEnumSerializer.<init>|<init>(kotlin.String;kotlin.Array<1:0>;kotlin.collections.Map<1:0,kotlin.String>;1:0){}[0]
+    constructor <init>(kotlin/String, kotlin/Array<#A>, kotlin.collections/Map<#A, kotlin/String>, #A, kotlin.collections/Map<#A, kotlin.collections/List<kotlin/Annotation>> = ..., kotlin.collections/List<kotlin/Annotation> = ...) // fallback.serializer/FallbackEnumSerializer.<init>|<init>(kotlin.String;kotlin.Array<1:0>;kotlin.collections.Map<1:0,kotlin.String>;1:0;kotlin.collections.Map<1:0,kotlin.collections.List<kotlin.Annotation>>;kotlin.collections.List<kotlin.Annotation>){}[0]
 
     open val descriptor // fallback.serializer/FallbackEnumSerializer.descriptor|{}descriptor[0]
         open fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // fallback.serializer/FallbackEnumSerializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
@@ -21,4 +21,4 @@ open class <#A: kotlin/Enum<#A>> fallback.serializer/FallbackEnumSerializer : ko
     open fun toString(): kotlin/String // fallback.serializer/FallbackEnumSerializer.toString|toString(){}[0]
 }
 
-final inline fun <#A: reified kotlin/Enum<#A>> fallback.serializer/FallbackEnumSerializer(kotlin/String, #A, kotlin.collections/Map<#A, kotlin/String> = ...): fallback.serializer/FallbackEnumSerializer<#A> // fallback.serializer/FallbackEnumSerializer|FallbackEnumSerializer(kotlin.String;0:0;kotlin.collections.Map<0:0,kotlin.String>){0§<kotlin.Enum<0:0>>}[0]
+final inline fun <#A: reified kotlin/Enum<#A>> fallback.serializer/FallbackEnumSerializer(kotlin/String, #A, kotlin.collections/Map<#A, kotlin/String> = ..., kotlin.collections/Map<#A, kotlin.collections/List<kotlin/Annotation>> = ..., kotlin.collections/List<kotlin/Annotation> = ...): fallback.serializer/FallbackEnumSerializer<#A> // fallback.serializer/FallbackEnumSerializer|FallbackEnumSerializer(kotlin.String;0:0;kotlin.collections.Map<0:0,kotlin.String>;kotlin.collections.Map<0:0,kotlin.collections.List<kotlin.Annotation>>;kotlin.collections.List<kotlin.Annotation>){0§<kotlin.Enum<0:0>>}[0]

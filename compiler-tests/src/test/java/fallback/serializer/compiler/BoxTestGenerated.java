@@ -65,4 +65,10 @@ public class BoxTestGenerated extends AbstractBoxTest {
   public void testPropertyOfSerializableClass() {
     run("PropertyOfSerializableClass.kt");
   }
+
+  @Test
+  @TestMetadata("SerialInfoAnnotations.kt")
+  public void testSerialInfoAnnotations() {
+    run("SerialInfoAnnotations.kt");
+  }
 }
