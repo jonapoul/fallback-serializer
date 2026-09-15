@@ -19,22 +19,33 @@ private val testLibraries: List<File> =
   System.getProperty("fallback.testLibraries")?.split(File.pathSeparator)?.map(::File)
     ?: error("Missing 'fallback.testLibraries' system property")
 
-fun TestConfigurationBuilder.configurePlugin() {
-  useConfigurators(::PluginRegistrarConfigurator, ::TestLibrariesConfigurator)
+// The order the compiler runs the two plugins in, for both FIR and IR. A real build can set it with
+// -Xcompiler-plugin-order.
+enum class PluginOrder {
+  SerializationFirst,
+  FallbackFirst,
+}
+
+fun TestConfigurationBuilder.configurePlugin(order: PluginOrder = PluginOrder.SerializationFirst) {
+  useConfigurators({ PluginRegistrarConfigurator(it, order) }, ::TestLibrariesConfigurator)
   useCustomRuntimeClasspathProviders(::TestLibrariesClasspathProvider)
 }
 
 // Registers our plugin alongside kotlinx.serialization's, as a consumer's build would
-class PluginRegistrarConfigurator(testServices: TestServices) :
+class PluginRegistrarConfigurator(testServices: TestServices, private val order: PluginOrder) :
   EnvironmentConfigurator(testServices) {
   override fun ExtensionStorage.registerCompilerExtensions(
     module: TestModule,
     configuration: CompilerConfiguration,
   ) {
+    if (order == PluginOrder.FallbackFirst) registerFallback(configuration)
     FirExtensionRegistrarAdapter.registerExtension(FirSerializationExtensionRegistrar())
-    with(FallbackCompilerPluginRegistrar()) { registerExtensions(configuration) }
     IrGenerationExtension.registerExtension(SerializationLoweringExtension())
+    if (order == PluginOrder.SerializationFirst) registerFallback(configuration)
   }
+
+  private fun ExtensionStorage.registerFallback(configuration: CompilerConfiguration) =
+    with(FallbackCompilerPluginRegistrar()) { registerExtensions(configuration) }
 }
 
 class TestLibrariesConfigurator(testServices: TestServices) :
