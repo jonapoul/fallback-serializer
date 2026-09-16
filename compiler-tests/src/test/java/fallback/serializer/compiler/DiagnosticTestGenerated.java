@@ -25,6 +25,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
   }
 
   @Test
+  @TestMetadata("DeclaredFallbackSerializer.kt")
+  public void testDeclaredFallbackSerializer() {
+    run("DeclaredFallbackSerializer.kt");
+  }
+
+  @Test
   @TestMetadata("MissingSerializableAnnotation.kt")
   public void testMissingSerializableAnnotation() {
     run("MissingSerializableAnnotation.kt");
