@@ -147,3 +147,40 @@ jobs:
             echo "One or more jobs failed or were cancelled"
             exit 1
           fi
+
+  claude-review:
+    needs: validation
+    if: ${{ !cancelled() && needs.validation.result == 'success' && !startsWith(github.head_ref, 'renovate/') }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: anthropics/claude-code-action@19dda84776b3518d98b8798e591daee763049ed3 # v1.0.220
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          allowed_bots: 'renovate'
+          prompt: |
+            REPO: ${{ github.repository }}
+            PR NUMBER: ${{ github.event.pull_request.number }}
+
+            **Code Review**:
+            Use `gh pr diff $PR_NUMBER` to get the diff, then submit a review with inline comments on specific lines where you find:
+            - Potential bugs or issues
+            - Performance concerns
+            - Security concerns
+            - Missing test coverage
+
+            Submit a review using:
+               gh api repos/$REPO/pulls/$PR_NUMBER/reviews -f event=COMMENT -f body="Review summary" -f 'comments[][path]=file.kt' -f 'comments[][line]=42' -f 'comments[][body]=Your comment'
+
+            Keep comments brief and actionable.
+
+            *IMPORTANT* Only leave a comment if something should be addressed — don't leave praise or nitpicks. To clarify: if you have nothing to say besides "LGTM", **DO NOT LEAVE A COMMENT AT ALL**
+
+            Use the repository's CLAUDE.md for guidance on style and conventions.
+          claude_args: '--allowed-tools "Bash(gh api:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr comment:*)"'
