@@ -20,6 +20,12 @@ public class BoxTestGenerated extends AbstractBoxTest {
   }
 
   @Test
+  @TestMetadata("ActualOnlyFallbackEntry.kt")
+  public void testActualOnlyFallbackEntry() {
+    run("ActualOnlyFallbackEntry.kt");
+  }
+
+  @Test
   public void testAllFilesPresentInBox() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler-tests/src/test/data/box"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
@@ -52,6 +58,12 @@ public class BoxTestGenerated extends AbstractBoxTest {
   @TestMetadata("EncodesBySerialName.kt")
   public void testEncodesBySerialName() {
     run("EncodesBySerialName.kt");
+  }
+
+  @Test
+  @TestMetadata("ExpectActualEnum.kt")
+  public void testExpectActualEnum() {
+    run("ExpectActualEnum.kt");
   }
 
   @Test
