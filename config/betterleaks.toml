@@ -1,0 +1,9 @@
+[[allowlists]]
+paths = [
+  # Compiler test data and unit tests
+  '''src/test/''',
+  '''src/.*Test/''',
+
+  # Generated ABI dumps
+  '''api/''',
+]
