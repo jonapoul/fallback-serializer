@@ -143,7 +143,8 @@ class Convention : Plugin<Project> {
 
       pluginManager.withPlugin("base") {
         logger.lifecycle("configurePublishing base $path")
-        tasks.named("check") { t -> t.dependsOn("checkSigningConfiguration") }
+        val checkSigning = tasks.named("checkSigningConfiguration")
+        tasks.named("check") { t -> t.dependsOn(checkSigning) }
       }
     }
   }
