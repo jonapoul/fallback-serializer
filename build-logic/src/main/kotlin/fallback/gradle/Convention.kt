@@ -130,21 +130,16 @@ class Convention : Plugin<Project> {
 
   private fun Project.configurePublishing() {
     pluginManager.withPlugin("com.vanniktech.maven.publish") {
-      logger.lifecycle("configurePublishing publish $path")
       extensions.configure(KotlinProjectExtension::class.java) { e ->
         e.explicitApi()
         e.abiValidation()
       }
 
+      // checkSigningConfiguration needs a real key, so CI runs it as its own step rather than
+      // hanging it off check
       val publishing = extensions.getByType(PublishingExtension::class.java)
       extensions.configure(SigningExtension::class.java) { e ->
         e.sign(publishing.publications)
-      }
-
-      pluginManager.withPlugin("base") {
-        logger.lifecycle("configurePublishing base $path")
-        val checkSigning = tasks.named("checkSigningConfiguration")
-        tasks.named("check") { t -> t.dependsOn(checkSigning) }
       }
     }
   }

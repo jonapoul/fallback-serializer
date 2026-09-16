@@ -196,10 +196,14 @@ jobs:
     if: ${{ !cancelled() && needs.validation.result == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    env:
+      ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.GPG_IN_MEMORY_KEY }}
+      ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.GPG_KEY_PASSWORD }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: ./.github/actions/setup-java
       - uses: ./.github/actions/setup-gradle
+      - run: ./gradlew checkSigningConfiguration
       - run: ./gradlew publishToMavenLocal
 
   finish:
