@@ -33,6 +33,7 @@ class Convention : Plugin<Project> {
     target.configureLicensee()
     target.configureStraitjacket()
     target.configureTests()
+    target.configureOtherChecks()
 
     listOf("org.jetbrains.kotlin.jvm", "org.jetbrains.kotlin.multiplatform").forEach { id ->
       target.pluginManager.withPlugin(id) { target.configureKotlin() }
@@ -100,10 +101,6 @@ class Convention : Plugin<Project> {
         !node.isDirectory && node.file.absolutePath.contains("generated", ignoreCase = true)
       }
     }
-
-    if (providers.gradleProperty("skipDetekt").isPresent) {
-      detektTasks.configureEach { t -> t.enabled = false }
-    }
   }
 
   private fun Project.configureLicensee() {
@@ -125,10 +122,13 @@ class Convention : Plugin<Project> {
       t.dependsOn(tasks.withType(Test::class.java))
       t.dependsOn(tasks.withType(KotlinTestReport::class.java))
     }
+  }
 
-    if (providers.gradleProperty("skipTests").isPresent) {
-      tasks.withType(AbstractTestTask::class.java).configureEach { t -> t.enabled = false }
-      tasks.withType(KotlinTestReport::class.java).configureEach { t -> t.enabled = false }
+  private fun Project.configureOtherChecks() {
+    if (providers.gradleProperty("otherChecks").isPresent) {
+      listOf(AbstractTestTask::class, KotlinTestReport::class, Detekt::class).forEach { klass ->
+        tasks.withType(klass.java).configureEach { t -> t.onlyIf { false } }
+      }
     }
   }
 }
