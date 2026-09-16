@@ -82,7 +82,7 @@ class Convention : Plugin<Project> {
       t.reports { r ->
         r.html.required.set(true)
         r.sarif.required.set(false)
-        r.checkstyle.required.set(false)
+        r.checkstyle.required.set(true)
         r.markdown.required.set(false)
       }
 
