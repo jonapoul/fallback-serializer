@@ -130,6 +130,7 @@ jobs:
       - uses: ./.github/actions/setup-java
       - uses: ./.github/actions/setup-gradle
       - run: ./gradlew -p build-logic check
+      - run: ./gradlew validatePlugins
       - name: Check generated compiler test suites are up to date
         run: |
           ./gradlew :compiler-tests:generateTests
