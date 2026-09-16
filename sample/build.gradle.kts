@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 plugins {
   alias(libs.plugins.kotlin.multiplatform)
   alias(libs.plugins.kotlin.serialization)
+  alias(libs.plugins.straitjacket)
   id("dev.jonpoulton.fallbackserializer")
 }
 
