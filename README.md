@@ -8,7 +8,7 @@ A Kotlin compiler plugin for enums being serialized using [kotlinx.serialization
 plugins {
   kotlin("multiplatform") // or kotlin("jvm"), kotlin("android")
   kotlin("plugin.serialization")
-  id("dev.jonpoulton.fallback-serializer") version "<version>"
+  id("dev.jonpoulton.fallbackserializer") version "<version>"
 }
 ```
 

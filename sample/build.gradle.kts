@@ -5,7 +5,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 plugins {
   alias(libs.plugins.kotlin.multiplatform)
   alias(libs.plugins.kotlin.serialization)
-  id("dev.jonpoulton.fallback-serializer")
+  id("dev.jonpoulton.fallbackserializer")
 }
 
 val javaFile = layout.projectDirectory.file("../.java-version")
