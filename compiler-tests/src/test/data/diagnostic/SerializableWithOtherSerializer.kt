@@ -14,8 +14,8 @@ object FruitSerializer : KSerializer<Fruit> {
   override fun deserialize(decoder: Decoder) = Fruit.valueOf(decoder.decodeString())
 }
 
-<!OTHER_ERROR_WITH_REASON!>@Serializable(with = FruitSerializer::class)
-enum class Fruit {
+@Serializable(with = FruitSerializer::class)
+<!MISSING_FALLBACK_SERIALIZER!>enum class Fruit<!> {
   Apple,
   @Fallback Unknown,
-}<!>
+}

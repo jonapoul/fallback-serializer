@@ -1,1 +1,1 @@
-/MultipleFallbackEntries.kt:10:3: error: Unknown error: enum class 'Fruit' can only have one @Fallback entry, 'Unknown' is already annotated.
+/MultipleFallbackEntries.kt:10:13: error: Enum class 'Fruit' can only have one @Fallback entry, 'Unknown' is already annotated.

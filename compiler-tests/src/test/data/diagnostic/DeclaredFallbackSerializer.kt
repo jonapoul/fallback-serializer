@@ -8,5 +8,5 @@ enum class Fruit {
   Apple,
   @Fallback Unknown;
 
-  <!OTHER_ERROR_WITH_REASON!>object FallbackSerializer<!>
+  <!DECLARED_FALLBACK_SERIALIZER!>object FallbackSerializer<!>
 }

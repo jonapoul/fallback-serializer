@@ -1,5 +1,5 @@
-/FallbackOutsideEnumEntry.kt:6:32: error: Unknown error: @Fallback can only be used on enum entries.
+/FallbackOutsideEnumEntry.kt:6:32: error: @Fallback can only be used on enum entries.
 
-/FallbackOutsideEnumEntry.kt:9:3: error: Unknown error: @Fallback can only be used on enum entries.
+/FallbackOutsideEnumEntry.kt:9:3: error: @Fallback can only be used on enum entries.
 
-/FallbackOutsideEnumEntry.kt:12:1: error: Unknown error: @Fallback can only be used on enum entries.
+/FallbackOutsideEnumEntry.kt:12:1: error: @Fallback can only be used on enum entries.
