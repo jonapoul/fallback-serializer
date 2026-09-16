@@ -1,5 +1,6 @@
 @file:Suppress("UnstableApiUsage")
 
+import dev.detekt.gradle.Detekt
 import org.gradle.api.attributes.Category.CATEGORY_ATTRIBUTE
 import org.gradle.api.attributes.Category.LIBRARY
 import org.gradle.api.attributes.Usage.JAVA_RUNTIME
@@ -74,6 +75,12 @@ val generateTests =
   }
 
 tasks.named<JavaCompile>("compileTestJava") { mustRunAfter(generateTests) }
+
+// Don't lint the generated suites in src/test/java, which also keeps detekt from reading
+// generateTests' output
+tasks.withType<Detekt>().configureEach {
+  if (name == "detekt" || name.startsWith("detektTest")) setSource(files("src/test/kotlin"))
+}
 
 tasks.test {
   inputs.dir(testData).withPropertyName("testData").withPathSensitivity(RELATIVE)
