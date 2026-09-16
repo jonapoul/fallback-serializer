@@ -38,6 +38,8 @@ With `Json { coerceInputValues = true }`, an unknown value for a property with a
 the fallback entry. Json replaces the value before the serializer runs. Properties without a default still get the
 fallback entry.
 
+All unknown values decode to the same entry, so in a `Map<Fruit, V>` key or a `Set<Fruit>` they collapse into one.
+
 # License
 
 ```

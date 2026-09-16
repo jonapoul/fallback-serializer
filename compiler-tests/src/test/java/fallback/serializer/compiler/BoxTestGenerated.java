@@ -77,4 +77,10 @@ public class BoxTestGenerated extends AbstractBoxTest {
   public void testSerialInfoAnnotations() {
     run("SerialInfoAnnotations.kt");
   }
+
+  @Test
+  @TestMetadata("UnknownValuesInCollections.kt")
+  public void testUnknownValuesInCollections() {
+    run("UnknownValuesInCollections.kt");
+  }
 }
