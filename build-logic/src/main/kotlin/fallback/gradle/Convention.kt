@@ -29,7 +29,7 @@ class Convention : Plugin<Project> {
 
     target.configureDetekt()
     target.configureLicensee()
-    target.pluginManager.apply(StraitjacketPlugin::class.java)
+    target.configureStraitjacket()
 
     listOf("org.jetbrains.kotlin.jvm", "org.jetbrains.kotlin.multiplatform").forEach { id ->
       target.pluginManager.withPlugin(id) { target.configureKotlin() }
@@ -40,15 +40,6 @@ class Convention : Plugin<Project> {
         e.explicitApi()
         e.abiValidation()
       }
-    }
-  }
-
-  private fun Project.configureLicensee() {
-    pluginManager.apply(LicenseePlugin::class.java)
-
-    extensions.configure(LicenseeExtension::class.java) { e ->
-      e.allow("Apache-2.0")
-      e.unusedAction(UnusedAction.IGNORE)
     }
   }
 
@@ -106,5 +97,18 @@ class Convention : Plugin<Project> {
         !node.isDirectory && node.file.absolutePath.contains("generated", ignoreCase = true)
       }
     }
+  }
+
+  private fun Project.configureLicensee() {
+    pluginManager.apply(LicenseePlugin::class.java)
+
+    extensions.configure(LicenseeExtension::class.java) { e ->
+      e.allow("Apache-2.0")
+      e.unusedAction(UnusedAction.IGNORE)
+    }
+  }
+
+  private fun Project.configureStraitjacket() {
+    pluginManager.apply(StraitjacketPlugin::class.java)
   }
 }
