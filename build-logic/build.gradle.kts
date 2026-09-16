@@ -4,6 +4,7 @@ plugins {
   `java-gradle-plugin`
   alias(libs.plugins.kotlin.jvm)
   alias(libs.plugins.detekt)
+  alias(libs.plugins.straitjacket)
 }
 
 val javaFile = layout.projectDirectory.file("../.java-version")
@@ -39,6 +40,7 @@ dependencies {
   compileOnly(kotlin("gradle-plugin"))
   compileOnlyPlugin(libs.plugins.detekt)
   compileOnlyPlugin(libs.plugins.licensee)
+  compileOnlyPlugin(libs.plugins.straitjacket)
 
   detektPlugins(libs.detektGradle)
 }

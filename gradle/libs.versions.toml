@@ -17,3 +17,4 @@ kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref 
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 licensee = { id = "app.cash.licensee", version = "1.14.1" }
 publish = { id = "com.vanniktech.maven.publish", version = "0.37.0" }
+straitjacket = { id = "dev.jonpoulton.straitjacket", version = "0.1.0" }

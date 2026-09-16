@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinBaseExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
+import straitjacket.StraitjacketPlugin
 
 class Convention : Plugin<Project> {
   override fun apply(target: Project) {
@@ -28,6 +29,7 @@ class Convention : Plugin<Project> {
 
     target.configureDetekt()
     target.configureLicensee()
+    target.pluginManager.apply(StraitjacketPlugin::class.java)
 
     listOf("org.jetbrains.kotlin.jvm", "org.jetbrains.kotlin.multiplatform").forEach { id ->
       target.pluginManager.withPlugin(id) { target.configureKotlin() }
