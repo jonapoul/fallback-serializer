@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name.identifier
 
+internal val ListOfCallableId = CallableId(FqName("kotlin.collections"), identifier("listOf"))
 internal val MapOfCallableId = CallableId(FqName("kotlin.collections"), identifier("mapOf"))
 
 internal val FallbackPredicate = DeclarationPredicate.create { annotated(FqNames.Fallback) }
@@ -19,6 +20,15 @@ internal object FqNames {
 
   val KotlinxSerialization = FqName("kotlinx.serialization")
   val SerialName = KotlinxSerialization.child(identifier("SerialName"))
+
+  // Annotation classes marked with any of these are kept in descriptors, same as
+  // kotlinx.serialization
+  val SerialInfoMarkers =
+    listOf(
+      KotlinxSerialization.child(identifier("SerialInfo")),
+      KotlinxSerialization.child(identifier("InheritableSerialInfo")),
+      KotlinxSerialization.child(identifier("MetaSerializable")),
+    )
 }
 
 internal object ClassIds {

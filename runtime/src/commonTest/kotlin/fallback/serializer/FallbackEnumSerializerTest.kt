@@ -2,10 +2,13 @@ package fallback.serializer
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonNames
 import kotlinx.serialization.json.JsonNull
 
+@OptIn(ExperimentalSerializationApi::class)
 class FallbackEnumSerializerTest {
   private enum class Fruit {
     Apple,
@@ -53,6 +56,34 @@ class FallbackEnumSerializerTest {
   @Test
   fun `descriptor uses serial name`() =
     assertEquals(expected = "Fruit", actual = FruitSerializer.descriptor.serialName)
+
+  @Test
+  fun `decodes by alternative name`() {
+    val serializer =
+      FallbackEnumSerializer<Fruit>(
+        serialName = "Fruit",
+        fallbackValue = Unknown,
+        valueAnnotations = mapOf(Fruit.Apple to listOf(JsonNames("apple"))),
+      )
+    assertEquals(expected = Fruit.Apple, actual = Json.decodeFromString(serializer, "\"apple\""))
+  }
+
+  @Test
+  fun `descriptor has annotations`() {
+    val serializer =
+      FallbackEnumSerializer<Fruit>(
+        serialName = "Fruit",
+        fallbackValue = Unknown,
+        valueAnnotations = mapOf(Fruit.Apple to listOf(JsonNames("apple"))),
+        annotations = listOf(JsonNames("fruit")),
+      )
+    assertEquals(expected = listOf(JsonNames("fruit")), actual = serializer.descriptor.annotations)
+    assertEquals(
+      expected = listOf(JsonNames("apple")),
+      actual = serializer.descriptor.getElementAnnotations(0),
+    )
+    assertEquals(expected = emptyList(), actual = serializer.descriptor.getElementAnnotations(1))
+  }
 
   @Test
   fun `invoke uses defaults`() {
