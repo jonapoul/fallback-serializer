@@ -11,8 +11,8 @@ import dev.detekt.gradle.extensions.DetektExtension
 import dev.detekt.gradle.plugin.DetektPlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.api.tasks.testing.Test
-import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.gradle.language.base.plugins.LifecycleBasePlugin.VERIFICATION_GROUP
 import org.jetbrains.kotlin.gradle.dsl.HasConfigurableKotlinCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinBaseExtension
@@ -100,6 +100,10 @@ class Convention : Plugin<Project> {
         !node.isDirectory && node.file.absolutePath.contains("generated", ignoreCase = true)
       }
     }
+
+    if (providers.gradleProperty("skipDetekt").isPresent) {
+      detektTasks.configureEach { t -> t.enabled = false }
+    }
   }
 
   private fun Project.configureLicensee() {
@@ -120,6 +124,11 @@ class Convention : Plugin<Project> {
       t.group = VERIFICATION_GROUP
       t.dependsOn(tasks.withType(Test::class.java))
       t.dependsOn(tasks.withType(KotlinTestReport::class.java))
+    }
+
+    if (providers.gradleProperty("skipTests").isPresent) {
+      tasks.withType(AbstractTestTask::class.java).configureEach { t -> t.enabled = false }
+      tasks.withType(KotlinTestReport::class.java).configureEach { t -> t.enabled = false }
     }
   }
 }

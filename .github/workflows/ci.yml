@@ -161,7 +161,7 @@ jobs:
             echo "::error::generateTests produced changes. Run './gradlew :compiler-tests:generateTests' locally and commit the results."
             exit 1
           fi
-      - run: ./gradlew validatePlugins
+      - run: ./gradlew check -PskipTests -PskipDetekt
       - uses: ./.github/actions/report-build-results
         if: ${{ !cancelled() }}
 
@@ -209,6 +209,7 @@ jobs:
       - tests
       - detekt
       - other-checks
+      - build-logic
       - publish-local
       - sample
     runs-on: ubuntu-latest
