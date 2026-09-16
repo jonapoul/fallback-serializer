@@ -12,10 +12,10 @@ buildConfig {
     internalVisibility = true
     topLevelConstants = true
   }
-  buildConfigField("String", "GROUP", providers.gradleProperty("GROUP").map { "\"$it\"" })
-  buildConfigField("String", "KOTLIN_VERSION", "\"${libs.versions.kotlin.get()}\"")
-  buildConfigField("String", "PLUGIN_ID", providers.gradleProperty("PLUGIN_ID").map { "\"$it\"" })
-  buildConfigField("String", "VERSION", providers.gradleProperty("VERSION_NAME").map { "\"$it\"" })
+  buildConfigField("GROUP", providers.gradleProperty("GROUP"))
+  buildConfigField("KOTLIN_VERSION", libs.versions.kotlin)
+  buildConfigField("PLUGIN_ID", providers.gradleProperty("PLUGIN_ID"))
+  buildConfigField("VERSION", providers.gradleProperty("VERSION_NAME"))
 }
 
 dependencies {
