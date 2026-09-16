@@ -10,6 +10,7 @@ fun main() {
       testsRoot = "compiler-tests/src/test/java",
     ) {
       testClass<AbstractBoxTest> { model("box") }
+      testClass<AbstractFallbackFirstBoxTest> { model("box") }
       testClass<AbstractDiagnosticTest> { model("diagnostic") }
     }
   }

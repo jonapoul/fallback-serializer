@@ -12,6 +12,10 @@ import org.jetbrains.kotlin.test.services.KotlinStandardLibrariesPathProvider
 
 // Compiles each file under src/test/data/box, then runs its box() function and expects "OK"
 open class AbstractBoxTest : AbstractFirLightTreeBlackBoxCodegenTest() {
+  // A getter, so subclasses can override it before configure() runs
+  protected open val pluginOrder: PluginOrder
+    get() = PluginOrder.SerializationFirst
+
   override fun createKotlinStandardLibrariesPathProvider(): KotlinStandardLibrariesPathProvider =
     EnvironmentBasedStandardLibrariesPathProvider
 
@@ -19,7 +23,7 @@ open class AbstractBoxTest : AbstractFirLightTreeBlackBoxCodegenTest() {
     with(builder) {
       super.configure(builder)
 
-      configurePlugin()
+      configurePlugin(pluginOrder)
 
       defaultDirectives {
         +FULL_JDK
