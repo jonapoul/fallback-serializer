@@ -1,7 +1,9 @@
-name: PR
+name: CI
 
 on:
   pull_request:
+  push:
+    branches: [ "main" ]
 
 env:
   CI: true
@@ -14,8 +16,8 @@ permissions:
   security-events: write
 
 concurrency:
-  group: 'ci-${{ github.event.merge_group.head_ref || github.head_ref }}-${{ github.workflow }}'
-  cancel-in-progress: true
+  group: 'ci-${{ github.event.merge_group.head_ref || github.head_ref || github.ref }}-${{ github.workflow }}'
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   changed-files:
@@ -169,7 +171,7 @@ jobs:
 
   claude-review:
     needs: validation
-    if: ${{ !cancelled() && needs.validation.result == 'success' && !startsWith(github.head_ref, 'renovate/') }}
+    if: ${{ !cancelled() && needs.validation.result == 'success' && github.event_name == 'pull_request' && !startsWith(github.head_ref, 'renovate/') }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
