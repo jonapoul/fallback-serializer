@@ -12,12 +12,14 @@ import dev.detekt.gradle.plugin.DetektPlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.testing.Test
+import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.gradle.language.base.plugins.LifecycleBasePlugin.VERIFICATION_GROUP
 import org.jetbrains.kotlin.gradle.dsl.HasConfigurableKotlinCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinBaseExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
+import org.jetbrains.kotlin.gradle.testing.internal.KotlinTestReport
 import straitjacket.StraitjacketPlugin
 
 class Convention : Plugin<Project> {
@@ -30,6 +32,7 @@ class Convention : Plugin<Project> {
     target.configureDetekt()
     target.configureLicensee()
     target.configureStraitjacket()
+    target.configureTests()
 
     listOf("org.jetbrains.kotlin.jvm", "org.jetbrains.kotlin.multiplatform").forEach { id ->
       target.pluginManager.withPlugin(id) { target.configureKotlin() }
@@ -110,5 +113,13 @@ class Convention : Plugin<Project> {
 
   private fun Project.configureStraitjacket() {
     pluginManager.apply(StraitjacketPlugin::class.java)
+  }
+
+  private fun Project.configureTests() {
+    tasks.register("testAll") { t ->
+      t.group = VERIFICATION_GROUP
+      t.dependsOn(tasks.withType(Test::class.java))
+      t.dependsOn(tasks.withType(KotlinTestReport::class.java))
+    }
   }
 }
