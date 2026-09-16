@@ -31,6 +31,12 @@ public class BoxTestGenerated extends AbstractBoxTest {
   }
 
   @Test
+  @TestMetadata("CoerceInputValues.kt")
+  public void testCoerceInputValues() {
+    run("CoerceInputValues.kt");
+  }
+
+  @Test
   @TestMetadata("DecodesKnownEntries.kt")
   public void testDecodesKnownEntries() {
     run("DecodesKnownEntries.kt");
