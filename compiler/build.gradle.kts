@@ -1,7 +1,7 @@
 plugins {
+  alias(libs.plugins.publish)
   alias(libs.plugins.kotlin.jvm)
   alias(libs.plugins.buildconfig)
-  alias(libs.plugins.publish)
   id("fallback.convention")
 }
 
