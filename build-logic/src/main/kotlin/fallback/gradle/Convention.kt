@@ -18,6 +18,11 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 class Convention : Plugin<Project> {
   override fun apply(target: Project) {
+    // Matches the published coordinates, so a build that includes this one (like sample) gets these
+    // projects in place of the dependencies the Gradle plugin adds
+    target.group = target.providers.gradleProperty("GROUP").get()
+    target.version = target.providers.gradleProperty("VERSION_NAME").get()
+
     target.configureDetekt()
 
     listOf("org.jetbrains.kotlin.jvm", "org.jetbrains.kotlin.multiplatform").forEach { id ->

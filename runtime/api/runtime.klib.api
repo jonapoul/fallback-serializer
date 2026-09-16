@@ -5,7 +5,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <fallback-serializer:runtime>
+// Library unique name: <dev.jonpoulton.fallback-serializer:runtime>
 open annotation class fallback.serializer/Fallback : kotlin/Annotation { // fallback.serializer/Fallback|null[0]
     constructor <init>() // fallback.serializer/Fallback.<init>|<init>(){}[0]
 }
