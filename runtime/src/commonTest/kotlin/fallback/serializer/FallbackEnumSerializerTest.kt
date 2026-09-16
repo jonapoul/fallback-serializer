@@ -4,6 +4,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonNull
 
 class FallbackEnumSerializerTest {
   private enum class Fruit {
@@ -29,6 +30,17 @@ class FallbackEnumSerializerTest {
   @Test
   fun `decodes unrecognised value as fallback`() =
     assertEquals(expected = Unknown, actual = decode("Orange"))
+
+  @Test
+  fun `decodes empty input as fallback`() =
+    assertEquals(expected = Unknown, actual = Json.decodeFromString(FruitSerializer, ""))
+
+  @Test
+  fun `decodes json null as fallback`() =
+    assertEquals(
+      expected = Unknown,
+      actual = Json.decodeFromJsonElement(FruitSerializer, JsonNull),
+    )
 
   @Test
   fun `encodes by serial name`() =
