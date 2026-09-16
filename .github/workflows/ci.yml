@@ -28,6 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     outputs:
+      renovate: ${{ steps.filter.outputs.renovate }}
       wrapper: ${{ steps.filter.outputs.wrapper }}
       shell: ${{ steps.filter.outputs.shell }}
     steps:
@@ -36,12 +37,30 @@ jobs:
         id: filter
         with:
           filters: |
+            renovate:
+              - '.github/renovate.json'
+              - '.github/renovate.json5'
+              - 'renovate.json'
+              - 'renovate.json5'
             wrapper:
               - 'gradle/wrapper/**'
               - 'gradlew'
               - 'gradlew.bat'
             shell:
               - '**/*.sh'
+
+  validate-renovate:
+    needs: changed-files
+    if: needs.changed-files.outputs.renovate == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 'lts/*'
+      - run: npm install -g renovate
+      - run: renovate-config-validator
 
   validate-wrapper:
     needs: changed-files
@@ -90,7 +109,7 @@ jobs:
       - run: scripts/ktfmt.sh check --force
 
   validation:
-    needs: [ changed-files, validate-wrapper, shellcheck, betterleaks, ktfmt ]
+    needs: [ changed-files, validate-wrapper, validate-renovate, shellcheck, betterleaks, ktfmt ]
     if: ${{ !cancelled() && github.ref_type != 'tag' }}
     runs-on: ubuntu-latest
     steps:
@@ -135,7 +154,6 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: ./.github/actions/setup-java
       - uses: ./.github/actions/setup-gradle
-      - run: ./gradlew -p build-logic check
       - name: Check generated compiler test suites are up to date
         run: |
           ./gradlew :compiler-tests:generateTests
@@ -143,6 +161,20 @@ jobs:
             echo "::error::generateTests produced changes. Run './gradlew :compiler-tests:generateTests' locally and commit the results."
             exit 1
           fi
+      - run: ./gradlew validatePlugins
+      - uses: ./.github/actions/report-build-results
+        if: ${{ !cancelled() }}
+
+  build-logic:
+    needs: validation
+    if: ${{ !cancelled() && needs.validation.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/setup-java
+      - uses: ./.github/actions/setup-gradle
+      - run: ./gradlew -p build-logic check
       - uses: ./.github/actions/report-build-results
         if: ${{ !cancelled() }}
 
