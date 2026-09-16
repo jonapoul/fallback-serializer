@@ -31,6 +31,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
   }
 
   @Test
+  @TestMetadata("FallbackOutsideEnumEntry.kt")
+  public void testFallbackOutsideEnumEntry() {
+    run("FallbackOutsideEnumEntry.kt");
+  }
+
+  @Test
   @TestMetadata("MissingSerializableAnnotation.kt")
   public void testMissingSerializableAnnotation() {
     run("MissingSerializableAnnotation.kt");
