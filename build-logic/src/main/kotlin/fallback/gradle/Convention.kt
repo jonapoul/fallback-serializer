@@ -11,9 +11,11 @@ import dev.detekt.gradle.extensions.DetektExtension
 import dev.detekt.gradle.plugin.DetektPlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.api.tasks.testing.Test
 import org.gradle.language.base.plugins.LifecycleBasePlugin.VERIFICATION_GROUP
+import org.gradle.plugins.signing.SigningExtension
 import org.jetbrains.kotlin.gradle.dsl.HasConfigurableKotlinCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinBaseExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
@@ -29,22 +31,16 @@ class Convention : Plugin<Project> {
     target.group = target.providers.gradleProperty("GROUP").get()
     target.version = target.providers.gradleProperty("VERSION_NAME").get()
 
+    listOf("org.jetbrains.kotlin.jvm", "org.jetbrains.kotlin.multiplatform").forEach { id ->
+      target.pluginManager.withPlugin(id) { target.configureKotlin() }
+    }
+
     target.configureDetekt()
     target.configureLicensee()
     target.configureStraitjacket()
     target.configureTests()
     target.configureOtherChecks()
-
-    listOf("org.jetbrains.kotlin.jvm", "org.jetbrains.kotlin.multiplatform").forEach { id ->
-      target.pluginManager.withPlugin(id) { target.configureKotlin() }
-    }
-
-    target.pluginManager.withPlugin("com.vanniktech.maven.publish") {
-      target.extensions.configure(KotlinProjectExtension::class.java) { e ->
-        e.explicitApi()
-        e.abiValidation()
-      }
-    }
+    target.configurePublishing()
   }
 
   private fun Project.configureKotlin() {
@@ -128,6 +124,26 @@ class Convention : Plugin<Project> {
     if (providers.gradleProperty("otherChecks").isPresent) {
       listOf(AbstractTestTask::class, KotlinTestReport::class, Detekt::class).forEach { klass ->
         tasks.withType(klass.java).configureEach { t -> t.onlyIf { false } }
+      }
+    }
+  }
+
+  private fun Project.configurePublishing() {
+    pluginManager.withPlugin("com.vanniktech.maven.publish") {
+      logger.lifecycle("configurePublishing publish $path")
+      extensions.configure(KotlinProjectExtension::class.java) { e ->
+        e.explicitApi()
+        e.abiValidation()
+      }
+
+      val publishing = extensions.getByType(PublishingExtension::class.java)
+      extensions.configure(SigningExtension::class.java) { e ->
+        e.sign(publishing.publications)
+      }
+
+      pluginManager.withPlugin("base") {
+        logger.lifecycle("configurePublishing base $path")
+        tasks.named("check") { t -> t.dependsOn("checkSigningConfiguration") }
       }
     }
   }
