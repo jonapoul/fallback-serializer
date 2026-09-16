@@ -24,6 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     outputs:
+      renovate: ${{ steps.filter.outputs.renovate }}
       wrapper: ${{ steps.filter.outputs.wrapper }}
       shell: ${{ steps.filter.outputs.shell }}
     steps:
@@ -32,12 +33,30 @@ jobs:
         id: filter
         with:
           filters: |
+            renovate:
+              - '.github/renovate.json'
+              - '.github/renovate.json5'
+              - 'renovate.json'
+              - 'renovate.json5'
             wrapper:
               - 'gradle/wrapper/**'
               - 'gradlew'
               - 'gradlew.bat'
             shell:
               - '**/*.sh'
+
+  validate-renovate:
+    needs: changed-files
+    if: needs.changed-files.outputs.renovate == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 'lts/*'
+      - run: npm install -g renovate
+      - run: renovate-config-validator
 
   validate-wrapper:
     needs: changed-files
@@ -84,7 +103,7 @@ jobs:
       - run: scripts/ktfmt.sh check --force
 
   validation:
-    needs: [ changed-files, validate-wrapper, shellcheck, betterleaks, ktfmt ]
+    needs: [ changed-files, validate-renovate, validate-wrapper, shellcheck, betterleaks, ktfmt ]
     if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     steps:
@@ -131,6 +150,10 @@ jobs:
       - uses: ./.github/actions/setup-gradle
       - run: ./gradlew -p build-logic check
       - run: ./gradlew validatePlugins
+      - run: ./gradlew checkSigningConfiguration
+        env:
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.GPG_IN_MEMORY_KEY }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.GPG_KEY_PASSWORD }}
       - name: Check generated compiler test suites are up to date
         run: |
           ./gradlew :compiler-tests:generateTests
