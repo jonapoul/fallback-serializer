@@ -3,6 +3,9 @@
 
 package fallback.gradle
 
+import app.cash.licensee.LicenseeExtension
+import app.cash.licensee.LicenseePlugin
+import app.cash.licensee.UnusedAction
 import dev.detekt.gradle.Detekt
 import dev.detekt.gradle.extensions.DetektExtension
 import dev.detekt.gradle.plugin.DetektPlugin
@@ -24,6 +27,7 @@ class Convention : Plugin<Project> {
     target.version = target.providers.gradleProperty("VERSION_NAME").get()
 
     target.configureDetekt()
+    target.configureLicensee()
 
     listOf("org.jetbrains.kotlin.jvm", "org.jetbrains.kotlin.multiplatform").forEach { id ->
       target.pluginManager.withPlugin(id) { target.configureKotlin() }
@@ -34,6 +38,15 @@ class Convention : Plugin<Project> {
         e.explicitApi()
         e.abiValidation()
       }
+    }
+  }
+
+  private fun Project.configureLicensee() {
+    pluginManager.apply(LicenseePlugin::class.java)
+
+    extensions.configure(LicenseeExtension::class.java) { e ->
+      e.allow("Apache-2.0")
+      e.unusedAction(UnusedAction.IGNORE)
     }
   }
 

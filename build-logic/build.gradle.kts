@@ -38,6 +38,7 @@ dependencies {
 
   compileOnly(kotlin("gradle-plugin"))
   compileOnlyPlugin(libs.plugins.detekt)
+  compileOnlyPlugin(libs.plugins.licensee)
 
   detektPlugins(libs.detektGradle)
 }
