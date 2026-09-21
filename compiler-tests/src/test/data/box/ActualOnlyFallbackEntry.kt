@@ -3,12 +3,16 @@
 // MODULE: common
 // FILE: common.kt
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 
 @Serializable
 expect enum class Fruit {
   Apple,
   Unknown,
 }
+
+// Common code can't see the generated serializer, so this checks it's still used at runtime
+fun decodeInCommon(value: String): Fruit = Json.decodeFromString<Fruit>(value)
 
 // MODULE: platform()()(common)
 // FILE: platform.kt
@@ -27,5 +31,6 @@ actual enum class Fruit {
 fun box(): String {
   assertEquals(Fruit.Apple, Json.decodeFromString<Fruit>("\"Apple\""))
   assertEquals(Fruit.Unknown, Json.decodeFromString<Fruit>("\"Orange\""))
+  assertEquals(Fruit.Unknown, decodeInCommon("\"Orange\""))
   return "OK"
 }
