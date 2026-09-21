@@ -43,6 +43,12 @@ public class BoxTestGenerated extends AbstractBoxTest {
   }
 
   @Test
+  @TestMetadata("CompanionObject.kt")
+  public void testCompanionObject() {
+    run("CompanionObject.kt");
+  }
+
+  @Test
   @TestMetadata("DecodesKnownEntries.kt")
   public void testDecodesKnownEntries() {
     run("DecodesKnownEntries.kt");
@@ -67,12 +73,6 @@ public class BoxTestGenerated extends AbstractBoxTest {
   }
 
   @Test
-  @TestMetadata("ImplicitSerializerPlainSerializable.kt")
-  public void testImplicitSerializerPlainSerializable() {
-    run("ImplicitSerializerPlainSerializable.kt");
-  }
-
-  @Test
   @TestMetadata("NestedEnum.kt")
   public void testNestedEnum() {
     run("NestedEnum.kt");
@@ -88,6 +88,12 @@ public class BoxTestGenerated extends AbstractBoxTest {
   @TestMetadata("PropertyOfSerializableClass.kt")
   public void testPropertyOfSerializableClass() {
     run("PropertyOfSerializableClass.kt");
+  }
+
+  @Test
+  @TestMetadata("ReflectionLookup.kt")
+  public void testReflectionLookup() {
+    run("ReflectionLookup.kt");
   }
 
   @Test

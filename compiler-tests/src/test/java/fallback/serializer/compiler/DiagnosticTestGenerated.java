@@ -53,10 +53,4 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
   public void testSerializableWithOtherSerializer() {
     run("SerializableWithOtherSerializer.kt");
   }
-
-  @Test
-  @TestMetadata("SerializableWithoutSerializer.kt")
-  public void testSerializableWithoutSerializer() {
-    run("SerializableWithoutSerializer.kt");
-  }
 }

@@ -13,6 +13,7 @@ enum class Fruit {
 
 fun box(): String {
   assertEquals(Fruit.Unknown, Json.decodeFromString<Fruit>("\"Orange\""))
+  assertEquals(Fruit.Unknown, Json.decodeFromString(Fruit.serializer(), "\"Orange\""))
   // Entries with a @SerialName don't decode from their declared name
   assertEquals(Fruit.Unknown, Json.decodeFromString<Fruit>("\"Cherry\""))
   return "OK"

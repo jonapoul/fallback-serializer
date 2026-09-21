@@ -15,7 +15,7 @@ object FruitSerializer : KSerializer<Fruit> {
 }
 
 @Serializable(with = FruitSerializer::class)
-<!MISSING_FALLBACK_SERIALIZER!>enum class Fruit<!> {
+<!CUSTOM_SERIALIZER!>enum class Fruit<!> {
   Apple,
   @Fallback Unknown,
 }

@@ -18,15 +18,3 @@ enum class Fruit {
 }
 
 @Serializable data class Basket(val fruit: List<Fruit>)
-
-// Plain @Serializable, no `with`: kotlinx.serialization resolves the generated `$serializer` by
-// name
-@Serializable
-enum class Veg {
-  Carrot,
-  @SerialName("spud") Potato,
-  @JsonNames("aubergine") Eggplant,
-  @Fallback Unknown,
-}
-
-@Serializable data class Crate(val veg: List<Veg>)
