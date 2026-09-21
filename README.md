@@ -63,7 +63,7 @@ Json.encodeToString(Fruit.Unknown) // -> "Unknown", not "Orange"
 The plugin includes a number of built-in usage checkers which make sure the `@Fallback` annotation is being applied properly. These will fail the build in any of the following cases:
 
 - An enum has more than one `@Fallback` entry.
-- An enum has a `@Fallback` entry but isn't annotated with `@Serializable`, which would otherwise ignore the fallback without telling you.
+- An enum has a `@Fallback` entry but isn't annotated with `@Serializable` (or an annotation marked with `@MetaSerializable`), which would otherwise ignore the fallback without telling you.
 - An enum with a `@Fallback` entry passes a `with` argument to `@Serializable`, since that serializer would be used instead of the generated one and the fallback would be ignored.
 - An actual enum has no `@Fallback` entry, but its expect enum does.
 - `@Fallback` is used anywhere besides an enum entry.

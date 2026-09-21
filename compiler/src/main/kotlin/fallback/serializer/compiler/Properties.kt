@@ -37,6 +37,7 @@ internal object ClassIds {
     ClassId(FqNames.FallbackSerializer, identifier("FallbackEnumSerializer"))
 
   val Serializable = ClassId(FqNames.KotlinxSerialization, identifier("Serializable"))
+  val MetaSerializable = ClassId(FqNames.KotlinxSerialization, identifier("MetaSerializable"))
   val Pair = ClassId(FqName("kotlin"), identifier("Pair"))
 }
 

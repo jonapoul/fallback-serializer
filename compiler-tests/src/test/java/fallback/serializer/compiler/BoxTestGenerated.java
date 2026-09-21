@@ -73,6 +73,12 @@ public class BoxTestGenerated extends AbstractBoxTest {
   }
 
   @Test
+  @TestMetadata("MetaSerializableAnnotation.kt")
+  public void testMetaSerializableAnnotation() {
+    run("MetaSerializableAnnotation.kt");
+  }
+
+  @Test
   @TestMetadata("NestedEnum.kt")
   public void testNestedEnum() {
     run("NestedEnum.kt");

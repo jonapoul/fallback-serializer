@@ -11,14 +11,16 @@ import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.getKClassArgument
+import org.jetbrains.kotlin.fir.declarations.hasAnnotation
+import org.jetbrains.kotlin.fir.declarations.toAnnotationClassLikeSymbol
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 
 // Reports a compile error for enums with a @Fallback entry that aren't annotated with a plain
-// @Serializable. Without the annotation, js, wasm and native can't resolve a serializer at compile
-// time, and the JVM falls back to kotlinx.serialization's default enum serializer. With a `with`
-// argument, that serializer is used instead of the generated `$serializer`. Either way the fallback
-// would be silently ignored.
+// @Serializable, or an annotation marked with @MetaSerializable. Without the annotation, js, wasm
+// and native can't resolve a serializer at compile time, and the JVM falls back to
+// kotlinx.serialization's default enum serializer. With a `with` argument, that serializer is used
+// instead of the generated `$serializer`. Either way the fallback would be silently ignored.
 internal object FallbackSerializableChecker : FirClassChecker(Common) {
   @OptIn(DirectDeclarationsAccess::class)
   context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -27,19 +29,28 @@ internal object FallbackSerializableChecker : FirClassChecker(Common) {
       declaration.symbol.declarationSymbols.filterIsInstance<FirEnumEntrySymbol>().any {
         context.session.predicateBasedProvider.matches(FallbackPredicate, it)
       }
-    if (!hasFallback) return
-
     val annotation = declaration.getAnnotationByClassId(ClassIds.Serializable, context.session)
     val factory =
       when {
-        annotation == null -> MISSING_SERIALIZABLE
-        annotation.getKClassArgument(Names.With) != null -> CUSTOM_SERIALIZER
-        else -> return
+        !hasFallback -> null
+        annotation != null ->
+          CUSTOM_SERIALIZER.takeIf { annotation.getKClassArgument(Names.With) != null }
+        declaration.hasMetaSerializableAnnotation() -> null
+        else -> MISSING_SERIALIZABLE
       }
+    if (factory == null) return
+
     reporter.reportOn(
       source = declaration.source,
       factory = factory,
       a = declaration.symbol.classId.shortClassName,
     )
+  }
+
+  context(context: CheckerContext)
+  private fun FirClass.hasMetaSerializableAnnotation(): Boolean = annotations.any { annotation ->
+    annotation
+      .toAnnotationClassLikeSymbol(context.session)
+      ?.hasAnnotation(ClassIds.MetaSerializable, context.session) == true
   }
 }
