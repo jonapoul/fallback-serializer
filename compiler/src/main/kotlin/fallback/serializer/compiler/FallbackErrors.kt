@@ -16,6 +16,7 @@ internal object FallbackErrors : KtDiagnosticsContainer() {
   val MULTIPLE_FALLBACK_ENTRIES by error2<KtElement, Name, Name>(DECLARATION_NAME)
   val MISSING_SERIALIZABLE by error1<KtElement, Name>(DECLARATION_NAME)
   val CUSTOM_SERIALIZER by error1<KtElement, Name>(DECLARATION_NAME)
+  val MISSING_ACTUAL_FALLBACK_ENTRY by error2<KtElement, Name, Name>(DECLARATION_NAME)
   val FALLBACK_OUTSIDE_ENUM_ENTRY by error0<KtAnnotationEntry>()
 
   override fun getRendererFactory(): BaseDiagnosticRendererFactory = FallbackErrorMessages
@@ -40,6 +41,13 @@ private object FallbackErrorMessages : BaseDiagnosticRendererFactory() {
         FallbackErrors.CUSTOM_SERIALIZER,
         "Enum class ''{0}'' has a @Fallback entry, so @Serializable can''t have a ''with'' " +
           "argument. The generated serializer is applied automatically.",
+        CommonRenderers.NAME,
+      )
+      map.put(
+        FallbackErrors.MISSING_ACTUAL_FALLBACK_ENTRY,
+        "Actual enum class ''{0}'' needs a @Fallback entry, since the expect enum marks ''{1}'' " +
+          "with @Fallback.",
+        CommonRenderers.NAME,
         CommonRenderers.NAME,
       )
       map.put(

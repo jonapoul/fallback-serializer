@@ -65,6 +65,7 @@ The plugin includes a number of built-in usage checkers which make sure the `@Fa
 - An enum has more than one `@Fallback` entry.
 - An enum has a `@Fallback` entry but isn't annotated with `@Serializable`, which would otherwise ignore the fallback without telling you.
 - An enum with a `@Fallback` entry passes a `with` argument to `@Serializable`, since that serializer would be used instead of the generated one and the fallback would be ignored.
+- An actual enum has no `@Fallback` entry, but its expect enum does.
 - `@Fallback` is used anywhere besides an enum entry.
 
 If you find any other cases that should be caught, please [open an issue](https://github.com/jonapoul/fallback-serializer/issues).
