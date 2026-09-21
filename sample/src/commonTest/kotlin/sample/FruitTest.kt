@@ -26,7 +26,7 @@ class FruitTest {
 
   @Test
   fun `uses class serial name`() =
-    assertEquals(expected = "fruit", actual = Fruit.FallbackSerializer.descriptor.serialName)
+    assertEquals(expected = "fruit", actual = Fruit.serializer().descriptor.serialName)
 
   @Test
   fun `decodes inside a class`() =

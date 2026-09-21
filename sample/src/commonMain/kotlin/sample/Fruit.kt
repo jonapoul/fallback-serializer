@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonNames
 
 @SerialName("fruit")
-@Serializable(with = Fruit.FallbackSerializer::class)
+@Serializable
 enum class Fruit {
   Apple,
   @SerialName("cherry_pie") Cherry,

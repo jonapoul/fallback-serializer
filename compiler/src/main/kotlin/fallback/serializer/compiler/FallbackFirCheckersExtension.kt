@@ -15,7 +15,7 @@ internal class FallbackFirCheckersExtension(session: FirSession) :
         setOf(
           FallbackSingleEntryChecker,
           FallbackSerializableChecker,
-          FallbackSerializerNameChecker,
+          FallbackActualEntryChecker,
         )
 
       override val propertyCheckers: Set<FirPropertyChecker> = setOf(FallbackTargetChecker)

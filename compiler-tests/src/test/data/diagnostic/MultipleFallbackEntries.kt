@@ -3,7 +3,7 @@
 import fallback.serializer.Fallback
 import kotlinx.serialization.Serializable
 
-@Serializable(with = Fruit.FallbackSerializer::class)
+@Serializable
 enum class Fruit {
   Apple,
   @Fallback Unknown,

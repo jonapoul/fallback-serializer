@@ -14,7 +14,7 @@ import kotlin.test.assertEquals
 annotation class Tag(val value: String)
 
 @Tag("fruit")
-@Serializable(with = Fruit.FallbackSerializer::class)
+@Serializable
 enum class Fruit {
   @JsonNames("apple", "APPLE") Apple,
   @SerialName("cherry_pie") @JsonNames("cherry") Cherry,
@@ -22,7 +22,7 @@ enum class Fruit {
 }
 
 fun box(): String {
-  val descriptor = Fruit.FallbackSerializer.descriptor
+  val descriptor = Fruit.serializer().descriptor
   assertEquals(listOf<Annotation>(Tag("fruit")), descriptor.annotations)
   assertEquals(listOf<Annotation>(JsonNames("apple", "APPLE")), descriptor.getElementAnnotations(0))
   // Annotations without @SerialInfo, like @SerialName and @Fallback, aren't included

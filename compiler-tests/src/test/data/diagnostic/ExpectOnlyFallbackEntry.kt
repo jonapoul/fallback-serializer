@@ -6,7 +6,7 @@
 import fallback.serializer.Fallback
 import kotlinx.serialization.Serializable
 
-@Serializable(with = Fruit.FallbackSerializer::class)
+@Serializable
 expect enum class Fruit {
   Apple,
   @Fallback Unknown,
@@ -16,9 +16,9 @@ expect enum class Fruit {
 // FILE: platform.kt
 import kotlinx.serialization.Serializable
 
-// The actual enum doesn't get the generated FallbackSerializer, so it doesn't match the expect one
+// The actual enum doesn't get the generated serializer, so it doesn't match the expect one
 @Serializable
-actual enum class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>Fruit<!> {
+actual <!MISSING_ACTUAL_FALLBACK_ENTRY!>enum class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>Fruit<!><!> {
   Apple,
   Unknown,
 }

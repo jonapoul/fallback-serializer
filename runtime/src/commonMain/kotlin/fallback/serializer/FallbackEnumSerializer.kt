@@ -12,8 +12,8 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
 /**
- * Serializer for enums with a fallback value. Also the base class of the `FallbackSerializer`
- * object generated inside each enum with a [Fallback] entry.
+ * Serializer for enums with a fallback value. Also the base class of the `$serializer` object
+ * generated inside each enum with a [Fallback] entry.
  *
  * [valueAnnotations] and [annotations] are the `@SerialInfo` annotations of the entries and the
  * enum class, such as `@JsonNames`. They're added to the [descriptor].

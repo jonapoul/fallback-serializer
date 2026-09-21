@@ -6,7 +6,7 @@ import kotlinx.serialization.json.Json
 import kotlin.test.assertEquals
 
 class Basket {
-  @Serializable(with = Fruit.FallbackSerializer::class)
+  @Serializable
   enum class Fruit {
     Apple,
     @Fallback Unknown,
@@ -14,7 +14,7 @@ class Basket {
 }
 
 fun box(): String {
-  assertEquals("test.Basket.Fruit", Basket.Fruit.FallbackSerializer.descriptor.serialName)
+  assertEquals("test.Basket.Fruit", Basket.Fruit.serializer().descriptor.serialName)
   assertEquals(Basket.Fruit.Apple, Json.decodeFromString<Basket.Fruit>("\"Apple\""))
   assertEquals(Basket.Fruit.Unknown, Json.decodeFromString<Basket.Fruit>("\"Orange\""))
   return "OK"

@@ -6,7 +6,7 @@ has the user-facing behaviour.
 ## Modules
 
 - `runtime` - KMP. `@Fallback` and `FallbackEnumSerializer`, the base class of the generated serializers.
-- `compiler` - K2 plugin. FIR generates the nested `FallbackSerializer` object and reports misuse, IR fills in its
+- `compiler` - K2 plugin. FIR generates the nested `$serializer` object and reports misuse, IR fills in its
   constructor.
 - `gradle-plugin` - applies the compiler plugin and adds the `runtime` dependency.
 - `compiler-tests` - tests on JetBrains' compiler test framework.

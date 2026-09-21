@@ -25,12 +25,6 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
   }
 
   @Test
-  @TestMetadata("DeclaredFallbackSerializer.kt")
-  public void testDeclaredFallbackSerializer() {
-    run("DeclaredFallbackSerializer.kt");
-  }
-
-  @Test
   @TestMetadata("ExpectOnlyFallbackEntry.kt")
   public void testExpectOnlyFallbackEntry() {
     run("ExpectOnlyFallbackEntry.kt");
@@ -58,11 +52,5 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
   @TestMetadata("SerializableWithOtherSerializer.kt")
   public void testSerializableWithOtherSerializer() {
     run("SerializableWithOtherSerializer.kt");
-  }
-
-  @Test
-  @TestMetadata("SerializableWithoutSerializer.kt")
-  public void testSerializableWithoutSerializer() {
-    run("SerializableWithoutSerializer.kt");
   }
 }
