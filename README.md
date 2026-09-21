@@ -29,6 +29,7 @@ The plugin needs the K2 compiler. Compiler plugins are tied to the Kotlin versio
 | Plugin | Kotlin |
 |--------|--------|
 | 0.1.0  | 2.4.20 |
+| 0.2.0  | 2.4.20 |
 
 Other Kotlin versions may fail to compile.
 
