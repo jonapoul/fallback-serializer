@@ -26,7 +26,7 @@ class FruitTest {
 
   @Test
   fun `uses class serial name`() =
-    assertEquals(expected = "fruit", actual = Fruit.FallbackSerializer.descriptor.serialName)
+    assertEquals(expected = "fruit", actual = Fruit.serializer().descriptor.serialName)
 
   @Test
   fun `decodes inside a class`() =
@@ -36,4 +36,33 @@ class FruitTest {
     )
 
   private fun decode(value: String): Fruit = Json.decodeFromString("\"$value\"")
+}
+
+// The same enum without @Serializable(with = ...), relying on the generated `$serializer`
+class VegTest {
+  @Test fun `decodes by name`() = assertEquals(expected = Veg.Carrot, actual = decode("Carrot"))
+
+  @Test
+  fun `decodes by serial name`() = assertEquals(expected = Veg.Potato, actual = decode("spud"))
+
+  @Test
+  fun `decodes by alternative name`() =
+    assertEquals(expected = Veg.Eggplant, actual = decode("aubergine"))
+
+  @Test
+  fun `decodes unknown value as fallback`() =
+    assertEquals(expected = Veg.Unknown, actual = decode("Turnip"))
+
+  @Test
+  fun `encodes by serial name`() =
+    assertEquals(expected = "\"spud\"", actual = Json.encodeToString(Veg.Potato))
+
+  @Test
+  fun `decodes inside a class`() =
+    assertEquals(
+      expected = Crate(listOf(Veg.Carrot, Veg.Unknown)),
+      actual = Json.decodeFromString<Crate>("""{"veg":["Carrot","Turnip"]}"""),
+    )
+
+  private fun decode(value: String): Veg = Json.decodeFromString("\"$value\"")
 }

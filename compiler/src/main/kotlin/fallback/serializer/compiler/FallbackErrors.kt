@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.psi.KtElement
 internal object FallbackErrors : KtDiagnosticsContainer() {
   val MULTIPLE_FALLBACK_ENTRIES by error2<KtElement, Name, Name>(DECLARATION_NAME)
   val MISSING_FALLBACK_SERIALIZER by error1<KtElement, Name>(DECLARATION_NAME)
-  val DECLARED_FALLBACK_SERIALIZER by error1<KtElement, Name>(DECLARATION_NAME)
   val FALLBACK_OUTSIDE_ENUM_ENTRY by error0<KtAnnotationEntry>()
 
   override fun getRendererFactory(): BaseDiagnosticRendererFactory = FallbackErrorMessages
@@ -33,14 +32,8 @@ private object FallbackErrorMessages : BaseDiagnosticRendererFactory() {
       )
       map.put(
         FallbackErrors.MISSING_FALLBACK_SERIALIZER,
-        "Enum class ''{0}'' has a @Fallback entry, so it must be annotated with " +
-          "@Serializable(with = {0}.FallbackSerializer::class).",
-        NAME,
-      )
-      map.put(
-        FallbackErrors.DECLARED_FALLBACK_SERIALIZER,
-        "Enum class ''{0}'' has a @Fallback entry, so ''FallbackSerializer'' is generated and " +
-          "can''t be declared.",
+        "Enum class ''{0}'' has a @Fallback entry, so it must be annotated with a plain " +
+          "@Serializable. The generated serializer is applied automatically.",
         NAME,
       )
       map.put(

@@ -9,6 +9,6 @@ enum class Fruit {
 
 fun box(): String {
   val nested = Fruit::class.java.declaredClasses.map { it.simpleName }
-  assertFalse("FallbackSerializer" in nested, "Unexpected nested classes: $nested")
+  assertFalse("\$serializer" in nested, "Unexpected nested classes: $nested")
   return "OK"
 }

@@ -41,7 +41,10 @@ internal object ClassIds {
 }
 
 internal object Names {
-  val FallbackSerializer = identifier("FallbackSerializer")
+  // The name kotlinx.serialization looks for when resolving an enum's serializer, before it falls
+  // back to its own EnumSerializer. Generating it means no `@Serializable(with = ...)` is needed.
+  val GeneratedSerializer = identifier("\$serializer")
+
   val Values = identifier("values")
   val With = identifier("with")
 }

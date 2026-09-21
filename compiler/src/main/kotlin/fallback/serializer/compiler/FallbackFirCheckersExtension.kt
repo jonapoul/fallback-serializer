@@ -12,11 +12,7 @@ internal class FallbackFirCheckersExtension(session: FirSession) :
   override val declarationCheckers: DeclarationCheckers =
     object : DeclarationCheckers() {
       override val classCheckers: Set<FirClassChecker> =
-        setOf(
-          FallbackSingleEntryChecker,
-          FallbackSerializableChecker,
-          FallbackSerializerNameChecker,
-        )
+        setOf(FallbackSingleEntryChecker, FallbackSerializableChecker)
 
       override val propertyCheckers: Set<FirPropertyChecker> = setOf(FallbackTargetChecker)
     }

@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlin.test.assertEquals
 
-@Serializable(with = Fruit.FallbackSerializer::class)
+@Serializable
 enum class Fruit {
   Apple,
   @SerialName("cherry_pie") Cherry,

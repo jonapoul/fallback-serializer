@@ -18,7 +18,7 @@ import kotlinx.serialization.json.Json
 import kotlin.test.assertEquals
 
 // Only the actual enum needs the @Fallback entry
-@Serializable(with = Fruit.FallbackSerializer::class)
+@Serializable
 actual enum class Fruit {
   Apple,
   @Fallback Unknown,

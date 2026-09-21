@@ -12,11 +12,11 @@ import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.getKClassArgument
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
-import org.jetbrains.kotlin.fir.types.classId
 
-// Reports a compile error for enums with a @Fallback entry that aren't annotated with
-// @Serializable(with = <Enum>.FallbackSerializer::class), otherwise kotlinx.serialization uses its
-// default enum serializer and the fallback is silently ignored
+// Reports a compile error for enums with a @Fallback entry that aren't annotated with a plain
+// @Serializable. Without the annotation, js, wasm and native can't resolve a serializer at compile
+// time. With a `with` argument, that serializer is used instead of the generated `$serializer` and
+// the fallback is silently ignored.
 internal object FallbackSerializableChecker : FirClassChecker(Common) {
   @OptIn(DirectDeclarationsAccess::class)
   context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -27,17 +27,15 @@ internal object FallbackSerializableChecker : FirClassChecker(Common) {
       }
     if (!hasFallback) return
 
-    val classId = declaration.symbol.classId
-    val serializerType =
-      declaration
-        .getAnnotationByClassId(ClassIds.Serializable, context.session)
-        ?.getKClassArgument(Names.With)
-    if (serializerType?.classId == classId.createNestedClassId(Names.FallbackSerializer)) return
+    val annotation = declaration.getAnnotationByClassId(ClassIds.Serializable, context.session)
+    val isValid = annotation != null && annotation.getKClassArgument(Names.With) == null
 
-    reporter.reportOn(
-      source = declaration.source,
-      factory = MISSING_FALLBACK_SERIALIZER,
-      a = classId.shortClassName,
-    )
+    if (!isValid) {
+      reporter.reportOn(
+        source = declaration.source,
+        factory = MISSING_FALLBACK_SERIALIZER,
+        a = declaration.symbol.classId.shortClassName,
+      )
+    }
   }
 }

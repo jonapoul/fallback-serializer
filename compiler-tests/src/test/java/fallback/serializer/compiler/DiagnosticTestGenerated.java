@@ -25,12 +25,6 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
   }
 
   @Test
-  @TestMetadata("DeclaredFallbackSerializer.kt")
-  public void testDeclaredFallbackSerializer() {
-    run("DeclaredFallbackSerializer.kt");
-  }
-
-  @Test
   @TestMetadata("ExpectOnlyFallbackEntry.kt")
   public void testExpectOnlyFallbackEntry() {
     run("ExpectOnlyFallbackEntry.kt");

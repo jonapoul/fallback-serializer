@@ -29,16 +29,15 @@ internal class FallbackFirDeclarationGenerationExtension(session: FirSession) :
   override fun getNestedClassifiersNames(
     classSymbol: FirClassSymbol<*>,
     context: NestedClassGenerationContext,
-  ): Set<Name> =
-    if (classSymbol.needsFallbackSerializer()) setOf(Names.FallbackSerializer) else emptySet()
+  ): Set<Name> = classSymbol.serializerNames()
 
   override fun generateNestedClassLikeDeclaration(
     owner: FirClassSymbol<*>,
     name: Name,
     context: NestedClassGenerationContext,
   ): FirClassLikeSymbol<*>? {
-    if (name != Names.FallbackSerializer || !owner.needsFallbackSerializer()) return null
-    return createNestedClass(owner, Names.FallbackSerializer, FallbackSerializerPluginKey, OBJECT) {
+    if (name !in owner.serializerNames()) return null
+    return createNestedClass(owner, name, FallbackSerializerPluginKey, OBJECT) {
         superType(
           ClassIds.FallbackEnumSerializer.createConeType(session, arrayOf(owner.constructType()))
         )
@@ -69,11 +68,11 @@ internal class FallbackFirDeclarationGenerationExtension(session: FirSession) :
     return listOf(constructor.symbol)
   }
 
-  // A FallbackSerializer declared by hand is reported by FallbackSerializerNameChecker instead
   @OptIn(DirectDeclarationsAccess::class)
-  private fun FirClassSymbol<*>.needsFallbackSerializer(): Boolean =
-    declarationSymbols.any {
+  private fun FirClassSymbol<*>.serializerNames(): Set<Name> {
+    val hasFallbackEntry = declarationSymbols.any {
       it is FirEnumEntrySymbol && session.predicateBasedProvider.matches(FallbackPredicate, it)
-    } &&
-      declarationSymbols.none { it is FirClassLikeSymbol<*> && it.name == Names.FallbackSerializer }
+    }
+    return if (hasFallbackEntry) setOf(Names.GeneratedSerializer) else emptySet()
+  }
 }
