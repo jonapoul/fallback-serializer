@@ -1,5 +1,6 @@
 package fallback.serializer.compiler
 
+import fallback.serializer.compiler.FallbackErrors.DIFFERENT_ACTUAL_FALLBACK_ENTRY
 import fallback.serializer.compiler.FallbackErrors.MISSING_ACTUAL_FALLBACK_ENTRY
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -15,7 +16,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 
 // Reports a compile error for an actual enum without a @Fallback entry when its expect enum has
-// one. Kotlin reports this too, but only as a missing `$serializer` member.
+// one. Kotlin reports this too, but only as a missing `$serializer` member. Also reports one when
+// the two mark different entries, since the actual one would silently win.
 internal object FallbackActualEntryChecker : FirClassChecker(Platform) {
   @OptIn(DirectDeclarationsAccess::class)
   context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -26,17 +28,26 @@ internal object FallbackActualEntryChecker : FirClassChecker(Platform) {
       expect?.declarationSymbols?.filterIsInstance<FirEnumEntrySymbol>()?.firstOrNull {
         it.hasAnnotation(ClassIds.Fallback, context.session)
       }
-    val hasActualEntry =
-      declaration.symbol.declarationSymbols.filterIsInstance<FirEnumEntrySymbol>().any {
+    val actualEntry =
+      declaration.symbol.declarationSymbols.filterIsInstance<FirEnumEntrySymbol>().firstOrNull {
         context.session.predicateBasedProvider.matches(FallbackPredicate, it)
       }
-    if (expectEntry == null || hasActualEntry) return
-
-    reporter.reportOn(
-      source = declaration.source,
-      factory = MISSING_ACTUAL_FALLBACK_ENTRY,
-      a = declaration.symbol.classId.shortClassName,
-      b = expectEntry.name,
-    )
+    when {
+      expectEntry == null -> Unit
+      actualEntry == null ->
+        reporter.reportOn(
+          source = declaration.source,
+          factory = MISSING_ACTUAL_FALLBACK_ENTRY,
+          a = declaration.symbol.classId.shortClassName,
+          b = expectEntry.name,
+        )
+      actualEntry.name != expectEntry.name ->
+        reporter.reportOn(
+          source = actualEntry.source,
+          factory = DIFFERENT_ACTUAL_FALLBACK_ENTRY,
+          a = actualEntry.name,
+          b = expectEntry.name,
+        )
+    }
   }
 }
