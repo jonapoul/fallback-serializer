@@ -73,7 +73,7 @@ Json.encodeToString(Fruit.Unknown) // -> "Unknown", not "Orange"
 
 The above uses JSON as an example, but this works with all kotlinx.serialization formats.
 
-Only unknown strings decode to the fallback. A value of the wrong type, like `123` or `null`, still fails to decode.
+Only unknown strings decode to the fallback. A value of the wrong type, like `123` or `null`, still fails to decode, except with `Json.decodeFromJsonElement`, which decodes it to the fallback too.
 
 Enums without a `@Fallback` entry are left alone.
 
