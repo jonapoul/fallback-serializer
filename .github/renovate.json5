@@ -10,7 +10,7 @@
     {
       // Deliberately unsupported Kotlin version, for the Gradle plugin's version check test
       "matchFileNames": ["gradle-plugin/build.gradle.kts"],
-      "matchPackageNames": ["org.jetbrains.kotlin:kotlin-gradle-plugin"],
+      "matchPackageNames": ["gradle-plugin", "org.jetbrains.kotlin:kotlin-gradle-plugin"],
       "enabled": false
     }
   ]
