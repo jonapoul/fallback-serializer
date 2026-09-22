@@ -10,3 +10,13 @@ class Basket {
 }
 
 <!FALLBACK_OUTSIDE_ENUM_ENTRY!>@Fallback<!> val topLevel = ""
+
+// Only enum entries count, so no serializer is generated for this enum
+@Serializable
+enum class Fruit {
+  Apple;
+
+  <!FALLBACK_OUTSIDE_ENUM_ENTRY!>@Fallback<!> val size = 1
+}
+
+val serializer = Fruit.<!UNRESOLVED_REFERENCE!>`$serializer`<!>

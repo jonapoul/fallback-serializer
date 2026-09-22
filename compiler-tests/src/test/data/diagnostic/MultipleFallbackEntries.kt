@@ -8,4 +8,5 @@ enum class Fruit {
   Apple,
   @Fallback Unknown,
   @Fallback <!MULTIPLE_FALLBACK_ENTRIES!>Other<!>,
+  @Fallback <!MULTIPLE_FALLBACK_ENTRIES!>Another<!>,
 }
