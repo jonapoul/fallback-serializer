@@ -31,6 +31,12 @@ public class FallbackFirstBoxTestGenerated extends AbstractFallbackFirstBoxTest 
   }
 
   @Test
+  @TestMetadata("AnnotatedFallbackEntry.kt")
+  public void testAnnotatedFallbackEntry() {
+    run("AnnotatedFallbackEntry.kt");
+  }
+
+  @Test
   @TestMetadata("ClassSerialName.kt")
   public void testClassSerialName() {
     run("ClassSerialName.kt");
@@ -46,6 +52,18 @@ public class FallbackFirstBoxTestGenerated extends AbstractFallbackFirstBoxTest 
   @TestMetadata("CompanionObject.kt")
   public void testCompanionObject() {
     run("CompanionObject.kt");
+  }
+
+  @Test
+  @TestMetadata("ConstructorAndInterface.kt")
+  public void testConstructorAndInterface() {
+    run("ConstructorAndInterface.kt");
+  }
+
+  @Test
+  @TestMetadata("CrossModule.kt")
+  public void testCrossModule() {
+    run("CrossModule.kt");
   }
 
   @Test
@@ -67,9 +85,27 @@ public class FallbackFirstBoxTestGenerated extends AbstractFallbackFirstBoxTest 
   }
 
   @Test
+  @TestMetadata("EntriesWithBodies.kt")
+  public void testEntriesWithBodies() {
+    run("EntriesWithBodies.kt");
+  }
+
+  @Test
   @TestMetadata("ExpectActualEnum.kt")
   public void testExpectActualEnum() {
     run("ExpectActualEnum.kt");
+  }
+
+  @Test
+  @TestMetadata("FallbackPosition.kt")
+  public void testFallbackPosition() {
+    run("FallbackPosition.kt");
+  }
+
+  @Test
+  @TestMetadata("JsonConfiguration.kt")
+  public void testJsonConfiguration() {
+    run("JsonConfiguration.kt");
   }
 
   @Test
@@ -88,6 +124,12 @@ public class FallbackFirstBoxTestGenerated extends AbstractFallbackFirstBoxTest 
   @TestMetadata("NoSerializerWithoutFallbackEntry.kt")
   public void testNoSerializerWithoutFallbackEntry() {
     run("NoSerializerWithoutFallbackEntry.kt");
+  }
+
+  @Test
+  @TestMetadata("NullableProperty.kt")
+  public void testNullableProperty() {
+    run("NullableProperty.kt");
   }
 
   @Test
@@ -112,5 +154,11 @@ public class FallbackFirstBoxTestGenerated extends AbstractFallbackFirstBoxTest 
   @TestMetadata("UnknownValuesInCollections.kt")
   public void testUnknownValuesInCollections() {
     run("UnknownValuesInCollections.kt");
+  }
+
+  @Test
+  @TestMetadata("Visibility.kt")
+  public void testVisibility() {
+    run("Visibility.kt");
   }
 }
