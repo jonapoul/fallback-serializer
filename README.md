@@ -1,12 +1,25 @@
 # Fallback Serializer
 
 [![Latest release on Maven Central](https://img.shields.io/maven-central/v/dev.jonpoulton.fallbackserializer/dev.jonpoulton.fallbackserializer.gradle.plugin)](https://central.sonatype.com/artifact/dev.jonpoulton.fallbackserializer/dev.jonpoulton.fallbackserializer.gradle.plugin)
+[![License](https://img.shields.io/github/license/jonapoul/fallback-serializer)](LICENSE.txt)
 
 A Kotlin compiler plugin that lets [kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization) enums decode unknown values to a fallback entry instead of throwing `SerializationException`. Useful when a server adds enum values before your clients know about them.
 
-kotlinx.serialization's `coerceInputValues` does a similar function, but it only covers class properties that have a default value. This plugin works is applied to the enum type and therefore works anywhere the enum is decoded, including top-level values and collections.
+kotlinx.serialization's `coerceInputValues` does something similar, but it only covers class properties that have a default value. This plugin is applied to the enum type, so it works anywhere the enum is decoded, including top-level values and collections.
 
 ## Setup
+
+In `settings.gradle.kts`:
+
+```kotlin
+pluginManagement {
+  repositories {
+    mavenCentral()
+  }
+}
+```
+
+In `build.gradle.kts`:
 
 ```kotlin
 plugins {
@@ -56,6 +69,25 @@ Encoding the fallback entry uses its own name, so the original value is lost:
 
 ```kotlin
 Json.encodeToString(Fruit.Unknown) // -> "Unknown", not "Orange"
+```
+
+The above uses JSON as an example, but this works with all kotlinx.serialization formats.
+
+Enums without a `@Fallback` entry are left alone.
+
+### Other features
+
+- `@JsonNames` and other `@SerialInfo` annotations on the enum and its entries still work as expected.
+- With multiplatform `expect`/`actual` enums, only the actual enum needs the `@Fallback` entry. Decoding from common code still uses the fallback.
+- With `coerceInputValues = true`, `Json` swaps an unknown value for the property's default before this plugin sees it. So a property with a default gets that default, and one without a default gets the fallback entry:
+
+```kotlin
+@Serializable
+data class Order(val withDefault: Fruit = Fruit.Apple, val withoutDefault: Fruit)
+
+val json = Json { coerceInputValues = true }
+json.decodeFromString<Order>("""{"withDefault":"Orange","withoutDefault":"Orange"}""")
+// -> Order(withDefault = Fruit.Apple, withoutDefault = Fruit.Unknown)
 ```
 
 ## Guardrails
