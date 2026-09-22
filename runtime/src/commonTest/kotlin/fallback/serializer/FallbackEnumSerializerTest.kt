@@ -87,6 +87,37 @@ class FallbackEnumSerializerTest {
     assertEquals(expected = "Fruit", actual = FruitSerializer.descriptor.serialName)
 
   @Test
+  fun `descriptor has an element per value`() {
+    val descriptor = FruitSerializer.descriptor
+    assertEquals(expected = 3, actual = descriptor.elementsCount)
+    assertEquals(
+      expected = listOf("Apple", "cherry_pie", "Unknown"),
+      actual = List(descriptor.elementsCount, descriptor::getElementName),
+    )
+  }
+
+  @Test
+  fun `fails to encode a value missing from values`() {
+    val serializer =
+      FallbackEnumSerializer(
+        serialName = "Fruit",
+        values = arrayOf(Fruit.Apple, Fruit.Unknown),
+        valueSerialNames = emptyMap(),
+        fallbackValue = Fruit.Unknown,
+      )
+    val error =
+      assertFailsWith<IllegalStateException> { Json.encodeToString(serializer, Fruit.Cherry) }
+    assertEquals(
+      expected = "Cherry is not a valid enum Fruit, must be one of [Apple, Unknown]",
+      actual = error.message,
+    )
+  }
+
+  @Test
+  fun `toString includes serial name`() =
+    assertEquals(expected = "FallbackEnumSerializer<Fruit>", actual = FruitSerializer.toString())
+
+  @Test
   fun `decodes by alternative name`() {
     val serializer =
       FallbackEnumSerializer<Fruit>(
