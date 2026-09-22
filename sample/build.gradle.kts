@@ -21,7 +21,10 @@ kotlin {
   wasmJs { nodejs() }
   linuxX64()
 
-  compilerOptions { allWarningsAsErrors.set(true) }
+  compilerOptions {
+    allWarningsAsErrors.set(true)
+    freeCompilerArgs.add("-Xexpect-actual-classes")
+  }
 
   sourceSets {
     commonMain.dependencies { implementation(libs.kotlinx.serialization.json) }
