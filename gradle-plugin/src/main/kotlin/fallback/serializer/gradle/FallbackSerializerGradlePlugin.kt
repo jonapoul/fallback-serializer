@@ -11,13 +11,13 @@ import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
 
 public class FallbackSerializerGradlePlugin : KotlinCompilerPluginSupportPlugin {
   override fun apply(target: Project) {
-    // The compiler plugin uses internal compiler APIs, so it only works with the Kotlin version it
-    // was built against
+    // The compiler plugin uses internal compiler APIs, so it only works with the Kotlin versions
+    // it's tested against
     target.plugins.withType(KotlinBasePlugin::class.java).configureEach { kotlin ->
-      if (kotlin.pluginVersion != KOTLIN_VERSION) {
+      if (kotlin.pluginVersion !in KOTLIN_VERSIONS) {
         throw GradleException(
-          "Fallback Serializer $VERSION needs Kotlin $KOTLIN_VERSION, but ${target.displayName} uses " +
-            "Kotlin ${kotlin.pluginVersion}"
+          "Fallback Serializer $VERSION needs Kotlin ${KOTLIN_VERSIONS.joinToString()}, but " +
+            "${target.displayName} uses Kotlin ${kotlin.pluginVersion}"
         )
       }
     }

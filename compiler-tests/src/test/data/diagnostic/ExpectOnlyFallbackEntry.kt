@@ -1,4 +1,3 @@
-// RENDER_DIAGNOSTICS_FULL_TEXT
 // LANGUAGE: +MultiPlatformProjects
 
 // MODULE: common

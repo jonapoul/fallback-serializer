@@ -15,16 +15,18 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.GeneratedByPlugi
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrMutableAnnotationContainer
+import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetEnumValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classFqName
+import org.jetbrains.kotlin.ir.types.classOrFail
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.deepCopyWithoutPatchingParents
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.getAnnotationArgumentValue
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.kotlinFqName
 import org.jetbrains.kotlin.ir.util.parentAsClass
@@ -63,9 +65,7 @@ internal class FallbackIrGenerationExtension : IrGenerationExtension {
 
       // Only entries with a @SerialName, the rest fall back to their name at runtime
       val valueSerialNames = entries.mapNotNull { entry ->
-        val serialName =
-          entry.getAnnotationArgumentValue<String>(FqNames.SerialName, "value")
-            ?: return@mapNotNull null
+        val serialName = entry.serialName() ?: return@mapNotNull null
         irGetEnumValue(enumType, entry) to irString(serialName)
       }
 
@@ -88,11 +88,7 @@ internal class FallbackIrGenerationExtension : IrGenerationExtension {
 
       +irDelegatingConstructorCall(baseConstructor).apply {
         typeArguments[0] = enumType
-        arguments[0] =
-          irString(
-            enumClass.getAnnotationArgumentValue<String>(FqNames.SerialName, "value")
-              ?: enumClass.kotlinFqName.asString()
-          )
+        arguments[0] = irString(enumClass.serialName() ?: enumClass.kotlinFqName.asString())
         arguments[1] = irCall(valuesFunction)
         arguments[2] =
           irMapOf(
@@ -175,7 +171,13 @@ internal class FallbackIrGenerationExtension : IrGenerationExtension {
   private fun IrMutableAnnotationContainer.serialInfoAnnotations(): List<IrExpression> =
     annotations
       .filter { annotation ->
-        FqNames.SerialInfoMarkers.any { annotation.classSymbol.owner.hasAnnotation(it) }
+        FqNames.SerialInfoMarkers.any { annotation.type.classOrFail.owner.hasAnnotation(it) }
       }
       .map { it.deepCopyWithoutPatchingParents() }
+
+  // Not getAnnotationArgumentValue, which is inline and reads arguments differently before 2.4.20
+  private fun IrMutableAnnotationContainer.serialName(): String? {
+    val annotation = annotations.firstOrNull { it.type.classFqName == FqNames.SerialName }
+    return (annotation?.arguments?.firstOrNull() as? IrConst)?.value as? String
+  }
 }

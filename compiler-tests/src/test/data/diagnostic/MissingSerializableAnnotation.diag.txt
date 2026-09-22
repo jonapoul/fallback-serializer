@@ -1,1 +1,1 @@
-/MissingSerializableAnnotation.kt:5:1: error: Enum class 'Fruit' has a @Fallback entry, so it must be annotated with @Serializable.
+/MissingSerializableAnnotation.kt:3:1: error: Enum class 'Fruit' has a @Fallback entry, so it must be annotated with @Serializable.

@@ -1,5 +1,3 @@
-// RENDER_DIAGNOSTICS_FULL_TEXT
-
 import fallback.serializer.Fallback
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable

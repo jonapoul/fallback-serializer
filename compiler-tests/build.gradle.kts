@@ -36,11 +36,15 @@ val testLibrariesClasspath =
     }
   }
 
+// Pass -Pfallback.testKotlinVersion to run the tests on another Kotlin compiler
+val testKotlinVersion =
+  providers.gradleProperty("fallback.testKotlinVersion").orElse(libs.versions.kotlin).get()
+
 dependencies {
   testImplementation(project(":compiler"))
-  testImplementation(kotlin("compiler"))
-  testImplementation(kotlin("compiler-internal-test-framework"))
-  testImplementation(kotlin("serialization-compiler-plugin"))
+  testImplementation(kotlin("compiler", testKotlinVersion))
+  testImplementation(kotlin("compiler-internal-test-framework", testKotlinVersion))
+  testImplementation(kotlin("serialization-compiler-plugin", testKotlinVersion))
   testImplementation(kotlin("stdlib"))
   testImplementation(kotlin("test-junit5"))
 
@@ -48,10 +52,10 @@ dependencies {
   testLibraries(libs.kotlinx.serialization.json)
 
   testRuntimeOnly(libs.junit4)
-  testRuntimeOnly(kotlin("annotations-jvm"))
-  testRuntimeOnly(kotlin("reflect"))
-  testRuntimeOnly(kotlin("script-runtime"))
-  testRuntimeOnly(kotlin("test"))
+  testRuntimeOnly(kotlin("annotations-jvm", testKotlinVersion))
+  testRuntimeOnly(kotlin("reflect", testKotlinVersion))
+  testRuntimeOnly(kotlin("script-runtime", testKotlinVersion))
+  testRuntimeOnly(kotlin("test", testKotlinVersion))
 }
 
 val testData = layout.projectDirectory.dir("src/test/data")
@@ -93,6 +97,7 @@ tasks.test {
     outputs.upToDateWhen { false }
   }
 
+  systemProperty("fallback.checkFullDiagnostics", testKotlinVersion == libs.versions.kotlin.get())
   systemProperty("idea.ignore.disabled.plugins", "true")
   systemProperty("idea.home.path", rootDir.absolutePath)
 
