@@ -245,6 +245,7 @@ jobs:
       - other-checks
       - build-logic
       - publish-local
+      - kotlin-versions
       - compiler-compat
       - sample
     runs-on: ubuntu-latest
