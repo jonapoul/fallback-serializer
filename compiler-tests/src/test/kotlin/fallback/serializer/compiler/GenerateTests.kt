@@ -12,6 +12,7 @@ fun main() {
       testClass<AbstractBoxTest> { model("box") }
       testClass<AbstractFallbackFirstBoxTest> { model("box") }
       testClass<AbstractDiagnosticTest> { model("diagnostic") }
+      testClass<AbstractFallbackFirstDiagnosticTest> { model("diagnostic") }
     }
   }
 }

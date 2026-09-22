@@ -14,13 +14,17 @@ import org.jetbrains.kotlin.test.services.TestPhase
 // Compiles each file under src/test/data/diagnostic and checks the reported diagnostics against the
 // inline markup and the neighbouring .diag.txt file
 open class AbstractDiagnosticTest : AbstractPhasedJvmDiagnosticLightTreeTest() {
+  // A getter, so subclasses can override it before configure() runs
+  protected open val pluginOrder: PluginOrder
+    get() = PluginOrder.SerializationFirst
+
   override fun createKotlinStandardLibrariesPathProvider(): KotlinStandardLibrariesPathProvider =
     EnvironmentBasedStandardLibrariesPathProvider
 
   override fun configure(builder: TestConfigurationBuilder): Unit =
     with(builder) {
       super.configure(builder)
-      configurePlugin()
+      configurePlugin(pluginOrder)
 
       defaultDirectives {
         +FULL_JDK
