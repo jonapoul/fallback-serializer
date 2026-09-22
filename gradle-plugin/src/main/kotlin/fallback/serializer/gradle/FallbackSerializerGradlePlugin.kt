@@ -12,13 +12,20 @@ import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
 public class FallbackSerializerGradlePlugin : KotlinCompilerPluginSupportPlugin {
   override fun apply(target: Project) {
     // The compiler plugin uses internal compiler APIs, so it only works with the Kotlin versions
-    // it's tested against
+    // it's tested against. The check can be downgraded to a warning, e.g. to try out a Kotlin
+    // pre-release.
+    val skipVersionCheck =
+      target.providers.gradleProperty(SKIP_VERSION_CHECK_PROPERTY).map { it.toBoolean() }
     target.plugins.withType(KotlinBasePlugin::class.java).configureEach { kotlin ->
       if (kotlin.pluginVersion !in KOTLIN_VERSIONS) {
-        throw GradleException(
+        val message =
           "Fallback Serializer $VERSION needs Kotlin ${KOTLIN_VERSIONS.joinToString()}, but " +
             "${target.displayName} uses Kotlin ${kotlin.pluginVersion}"
-        )
+        if (skipVersionCheck.getOrElse(false)) {
+          target.logger.warn("$message. Continuing, since $SKIP_VERSION_CHECK_PROPERTY is set")
+        } else {
+          throw GradleException(message)
+        }
       }
     }
 
@@ -50,5 +57,6 @@ public class FallbackSerializerGradlePlugin : KotlinCompilerPluginSupportPlugin 
 
   private companion object {
     const val SERIALIZATION_PLUGIN_ID = "org.jetbrains.kotlin.plugin.serialization"
+    const val SKIP_VERSION_CHECK_PROPERTY = "fallback.skipKotlinVersionCheck"
   }
 }

@@ -47,3 +47,5 @@ scripts/ktfmt.sh                                   # format files changed since 
 - The build uses `kotlin` in `gradle/libs.versions.toml`. `KOTLIN_VERSIONS` in `gradle.properties` lists the versions
   that CI tests and the Gradle plugin accepts. Stick to compiler APIs that exist in all of them, and avoid inline
   compiler helpers, since their bodies get copied into the plugin.
+- `KOTLIN_PRERELEASE` in `gradle.properties` is the latest Kotlin Beta or RC, bumped by Renovate. CI tests it in a
+  non-blocking job, skipped once it's in `KOTLIN_VERSIONS`.
