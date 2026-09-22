@@ -5,9 +5,12 @@ kotlinx-serialization = "1.11.0"
 [libraries]
 detektGradle = { module = "dev.jonpoulton.blueprint:detekt-rules", version = "2.4.2" }
 junit4 = { module = "junit:junit", version = "4.13.2" }
+kotlinx-serialization-cbor = { module = "org.jetbrains.kotlinx:kotlinx-serialization-cbor", version.ref = "kotlinx-serialization" }
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
+kotlinx-serialization-protobuf = { module = "org.jetbrains.kotlinx:kotlinx-serialization-protobuf", version.ref = "kotlinx-serialization" }
 ktfmt = { module = "com.facebook:ktfmt", version = "0.64" } # only used in ktfmt.sh
+xmlutil = { module = "io.github.pdvrieze.xmlutil:serialization", version = "1.0.2" }
 
 [plugins]
 buildconfig = { id = "com.github.gmazzo.buildconfig", version = "6.1.1" }
