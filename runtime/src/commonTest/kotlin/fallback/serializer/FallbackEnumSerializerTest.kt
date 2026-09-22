@@ -2,8 +2,11 @@ package fallback.serializer
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.SerializationException
+import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonNames
 import kotlinx.serialization.json.JsonNull
@@ -44,6 +47,32 @@ class FallbackEnumSerializerTest {
       expected = Unknown,
       actual = Json.decodeFromJsonElement(FruitSerializer, JsonNull),
     )
+
+  // The fallback only covers unknown strings. Decoding from a string fails partway through any
+  // other value, but a JsonElement has already been parsed, so there's nothing left half-read.
+  @Test
+  fun `fails to decode non-string values in a string`() {
+    for (value in listOf("123", "true", "null", "{\"a\":1}", "[\"Apple\"]")) {
+      assertFailsWith<SerializationException>(value) {
+        Json.decodeFromString(ListSerializer(FruitSerializer), "[$value,\"Apple\"]")
+      }
+    }
+  }
+
+  @Test
+  fun `decodes non-string json elements as fallback`() {
+    for (value in listOf("123", "true", "null", "{\"a\":1}", "[\"Apple\"]")) {
+      assertEquals(
+        expected = listOf(Unknown, Apple),
+        actual =
+          Json.decodeFromJsonElement(
+            ListSerializer(FruitSerializer),
+            Json.parseToJsonElement("[$value,\"Apple\"]"),
+          ),
+        message = value,
+      )
+    }
+  }
 
   @Test
   fun `encodes by serial name`() =
