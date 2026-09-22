@@ -6,7 +6,26 @@
   "extends": [
     "github>jonapoul/renovate-config:default.json5"
   ],
+  "customManagers": [
+    {
+      // Kotlin pre-release that CI tests against, see gradle.properties
+      "customType": "regex",
+      "managerFilePatterns": ["/^gradle\\.properties$/"],
+      "matchStrings": ["KOTLIN_PRERELEASE=(?<currentValue>\\S+)"],
+      "depNameTemplate": "org.jetbrains.kotlin:kotlin-compiler",
+      "datasourceTemplate": "maven"
+    }
+  ],
   "packageRules": [
+    {
+      // Track Betas and RCs as soon as they're out, in their own PRs rather than the kotlin group
+      "matchManagers": ["custom.regex"],
+      "matchDepNames": ["org.jetbrains.kotlin:kotlin-compiler"],
+      "ignoreUnstable": false,
+      "allowedVersions": "/^\\d+\\.\\d+\\.\\d+(-(Beta|RC)\\d*)?$/",
+      "minimumReleaseAge": "0 days",
+      "groupName": "kotlin-prerelease"
+    },
     {
       // Deliberately unsupported Kotlin version, for the Gradle plugin's version check test
       "matchFileNames": ["gradle-plugin/build.gradle.kts"],

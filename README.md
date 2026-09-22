@@ -45,7 +45,7 @@ The plugin needs the K2 compiler. Compiler plugins use internal compiler APIs, s
 | 0.2.0      | 2.4.20                |
 | 0.3.0      | 2.4.0, 2.4.10, 2.4.20 |
 
-The Gradle plugin fails the build on any other Kotlin version.
+The Gradle plugin fails the build on any other Kotlin version. To try one anyway, e.g. a pre-release, set `fallback.skipKotlinVersionCheck=true` in `gradle.properties` and the error becomes a warning.
 
 ## Usage
 

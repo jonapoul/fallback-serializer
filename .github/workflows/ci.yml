@@ -180,10 +180,18 @@ jobs:
     timeout-minutes: 5
     outputs:
       versions: ${{ steps.read.outputs.versions }}
+      prerelease: ${{ steps.read.outputs.prerelease }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - id: read
-        run: echo "versions=$(sed -n 's/^KOTLIN_VERSIONS=//p' gradle.properties | jq -Rc 'split(",")')" >> "$GITHUB_OUTPUT"
+        run: |
+          versions=$(sed -n 's/^KOTLIN_VERSIONS=//p' gradle.properties)
+          prerelease=$(sed -n 's/^KOTLIN_PRERELEASE=//p' gradle.properties)
+          echo "versions=$(jq -Rc 'split(",")' <<< "$versions")" >> "$GITHUB_OUTPUT"
+          # Skipped once the pre-release is a supported version
+          if [[ ",$versions," != *",$prerelease,"* ]]; then
+            echo "prerelease=$prerelease" >> "$GITHUB_OUTPUT"
+          fi
 
   compiler-compat:
     name: compiler-tests (Kotlin ${{ matrix.kotlin }})
@@ -235,6 +243,31 @@ jobs:
       - uses: ./.github/actions/setup-gradle
       - run: ./gradlew checkSigningConfiguration
       - run: ./gradlew publishToMavenLocal
+
+  # Early warning for the next Kotlin release. Pre-releases may break internal compiler APIs, so
+  # this doesn't block PRs.
+  kotlin-prerelease:
+    name: ${{ matrix.name }} (Kotlin ${{ needs.kotlin-versions.outputs.prerelease }})
+    needs: [ validation, kotlin-versions ]
+    if: ${{ !cancelled() && needs.validation.result == 'success' && needs.kotlin-versions.outputs.prerelease != '' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: compiler-tests
+            command: ./gradlew :compiler-tests:test
+          - name: sample
+            command: ./gradlew -p sample check -Pfallback.skipKotlinVersionCheck=true
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/setup-java
+      - uses: ./.github/actions/setup-gradle
+      - run: ${{ matrix.command }} -Pfallback.testKotlinVersion=${{ needs.kotlin-versions.outputs.prerelease }}
+      - uses: ./.github/actions/report-build-results
+        if: ${{ !cancelled() }}
 
   finish:
     if: ${{ !cancelled() }}
