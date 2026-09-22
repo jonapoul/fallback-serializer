@@ -1,0 +1,1 @@
+/platform.kt:25:13: error: @Fallback is on 'Other' here, but on 'Unknown' in the expect enum. Both must mark the same entry.
