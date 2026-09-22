@@ -72,7 +72,7 @@ dependencies {
   testRepoJars(project(":compiler"))
   testRepoJars(project(":runtime"))
 
-  oldKotlinPluginClasspath(kotlin("gradle-plugin", "2.4.0"))
+  oldKotlinPluginClasspath(kotlin("gradle-plugin", "2.4.20"))
 }
 
 val testRepo =
