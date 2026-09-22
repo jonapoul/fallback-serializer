@@ -10,6 +10,9 @@ naming:
     maximumFunctionNameLength: 50
 
 style:
+  MultilineRawStringIndentation:
+    # ktfmt owns the indentation
+    active: false
   RedundantVisibilityModifier:
     # explicit API mode needs the public modifiers
     active: false

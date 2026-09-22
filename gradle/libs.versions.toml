@@ -1,15 +1,22 @@
 [versions]
+blueprint = "2.4.2"
+junit = "6.1.3"
 kotlin = "2.4.20"
 kotlinx-serialization = "1.11.0"
 
 [libraries]
+assertk = { module = "com.willowtreeapps.assertk:assertk", version = "0.28.1" }
+blueprint-assertk = { module = "dev.jonpoulton.blueprint:test-assertk", version.ref = "blueprint" }
 detektGradle = { module = "dev.jonpoulton.blueprint:detekt-rules", version = "2.4.2" }
+junit-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
+junit-launcher = { module = "org.junit.platform:junit-platform-launcher" }
 junit4 = { module = "junit:junit", version = "4.13.2" }
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 ktfmt = { module = "com.facebook:ktfmt", version = "0.64" } # only used in ktfmt.sh
 
 [plugins]
+blueprint-test = { id = "dev.jonpoulton.blueprint.test", version.ref = "blueprint" }
 buildconfig = { id = "com.github.gmazzo.buildconfig", version = "6.1.1" }
 detekt = { id = "dev.detekt", version = "2.0.0-alpha.6" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

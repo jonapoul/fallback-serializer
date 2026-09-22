@@ -24,6 +24,7 @@ has the user-facing behaviour.
 ./gradlew :compiler-tests:generateTests            # after adding or removing a test data file
 ./gradlew :compiler-tests:test -PupdateTestData    # rewrite expected diagnostics
 ./gradlew :runtime:jvmTest
+./gradlew :gradle-plugin:test                      # TestKit scenarios, using blueprint's test framework
 ./gradlew -p build-logic check
 ./gradlew -p sample check                          # end-to-end tests on every backend
 ./gradlew detektCheck
