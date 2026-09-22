@@ -281,6 +281,7 @@ jobs:
       - kotlin-versions
       - compiler-compat
       - sample
+      - claude-review
     runs-on: ubuntu-latest
     steps:
       - run: |
@@ -325,3 +326,39 @@ jobs:
 
             Use the repository's CLAUDE.md for guidance on style and conventions.
           claude_args: '--allowed-tools "Bash(gh api:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr comment:*)"'
+
+      # Blocks finish, and so auto-merge, until Claude's review threads are resolved. Re-run this job
+      # after resolving them.
+      - name: Check for unresolved review threads
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OWNER: ${{ github.repository_owner }}
+          REPO: ${{ github.event.repository.name }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          unresolved=$(gh api graphql --paginate \
+            -F owner="$OWNER" -F repo="$REPO" -F number="$PR_NUMBER" \
+            -f query='
+              query($owner: String!, $repo: String!, $number: Int!, $endCursor: String) {
+                repository(owner: $owner, name: $repo) {
+                  pullRequest(number: $number) {
+                    reviewThreads(first: 100, after: $endCursor) {
+                      pageInfo { hasNextPage endCursor }
+                      nodes {
+                        isResolved
+                        comments(first: 1) { nodes { author { login } path line } }
+                      }
+                    }
+                  }
+                }
+              }' \
+            --jq '.data.repository.pullRequest.reviewThreads.nodes[]
+              | select(.isResolved | not)
+              | .comments.nodes[0]
+              | select(.author.login | startswith("claude"))
+              | "\(.path):\(.line)"')
+          if [[ -n "$unresolved" ]]; then
+            echo "::error::Unresolved Claude review threads:"
+            echo "$unresolved"
+            exit 1
+          fi
