@@ -1,1 +1,1 @@
-/SerializableWithOtherSerializer.kt:18:1: error: Enum class 'Fruit' has a @Fallback entry, so @Serializable can't have a 'with' argument. The generated serializer is applied automatically.
+/SerializableWithOtherSerializer.kt:16:1: error: Enum class 'Fruit' has a @Fallback entry, so @Serializable can't have a 'with' argument. The generated serializer is applied automatically.

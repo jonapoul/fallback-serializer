@@ -26,12 +26,12 @@ class KotlinVersionScenario : FallbackScenarioTest() {
     super.defaultRunner().withPluginClasspath(oldKotlinClasspath)
 
   @Test
-  fun `fails with a different Kotlin version`() = runScenario {
+  fun `fails with an unsupported Kotlin version`() = runScenario {
     assertThatTask(":help")
       .failsBuild()
       .outputContains(
-        "Fallback Serializer $VERSION needs Kotlin $KOTLIN_VERSION, but root project " +
-          "'test-project' uses Kotlin 2.4.0"
+        "Fallback Serializer $VERSION needs Kotlin ${KOTLIN_VERSIONS.joinToString()}, but root " +
+          "project 'test-project' uses Kotlin 2.3.21"
       )
   }
 }

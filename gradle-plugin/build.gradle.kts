@@ -15,6 +15,14 @@ plugins {
   id("fallback.convention")
 }
 
+val kotlinVersions = providers.gradleProperty("KOTLIN_VERSIONS").map { it.split(",") }
+
+afterEvaluate {
+  check(libs.versions.kotlin.get() in kotlinVersions.get()) {
+    "KOTLIN_VERSIONS in gradle.properties is missing Kotlin ${libs.versions.kotlin.get()}"
+  }
+}
+
 buildConfig {
   packageName("fallback.serializer.gradle")
   useKotlinOutput {
@@ -22,7 +30,7 @@ buildConfig {
     topLevelConstants = true
   }
   buildConfigField("GROUP", providers.gradleProperty("GROUP"))
-  buildConfigField("KOTLIN_VERSION", libs.versions.kotlin)
+  buildConfigField("KOTLIN_VERSIONS", kotlinVersions)
   buildConfigField("PLUGIN_ID", providers.gradleProperty("PLUGIN_ID"))
   buildConfigField("VERSION", providers.gradleProperty("VERSION_NAME"))
 
@@ -49,7 +57,7 @@ val testRepoClasspath =
     }
   }
 
-// A Kotlin Gradle plugin older than the one this plugin is built against
+// A Kotlin Gradle plugin older than the ones this plugin supports
 val oldKotlinPluginClasspath =
   configurations.register("oldKotlinPluginClasspath") {
     isCanBeResolved = true
@@ -72,7 +80,7 @@ dependencies {
   testRepoJars(project(":compiler"))
   testRepoJars(project(":runtime"))
 
-  oldKotlinPluginClasspath(kotlin("gradle-plugin", "2.4.0"))
+  oldKotlinPluginClasspath(kotlin("gradle-plugin", "2.3.21"))
 }
 
 val testRepo =

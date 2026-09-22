@@ -37,14 +37,15 @@ The runtime supports every platform that kotlinx.serialization does.
 
 ### Kotlin version
 
-The plugin needs the K2 compiler. Compiler plugins are tied to the Kotlin version they're built against, so use the matching Kotlin version:
+The plugin needs the K2 compiler. Compiler plugins use internal compiler APIs, so each release only supports the Kotlin versions it's tested against:
 
-| Plugin | Kotlin |
-|--------|--------|
-| 0.1.0  | 2.4.20 |
-| 0.2.0  | 2.4.20 |
+| Plugin     | Kotlin                |
+|------------|-----------------------|
+| 0.1.0      | 2.4.20                |
+| 0.2.0      | 2.4.20                |
+| 0.3.0      | 2.4.0, 2.4.10, 2.4.20 |
 
-Other Kotlin versions may fail to compile.
+The Gradle plugin fails the build on any other Kotlin version.
 
 ## Usage
 

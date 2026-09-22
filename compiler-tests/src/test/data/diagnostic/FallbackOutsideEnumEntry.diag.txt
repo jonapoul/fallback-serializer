@@ -1,9 +1,9 @@
-/FallbackOutsideEnumEntry.kt:6:32: error: @Fallback can only be used on enum entries.
+/FallbackOutsideEnumEntry.kt:4:32: error: @Fallback can only be used on enum entries.
 
-/FallbackOutsideEnumEntry.kt:9:3: error: @Fallback can only be used on enum entries.
+/FallbackOutsideEnumEntry.kt:7:3: error: @Fallback can only be used on enum entries.
 
-/FallbackOutsideEnumEntry.kt:12:1: error: @Fallback can only be used on enum entries.
+/FallbackOutsideEnumEntry.kt:10:1: error: @Fallback can only be used on enum entries.
 
-/FallbackOutsideEnumEntry.kt:19:3: error: @Fallback can only be used on enum entries.
+/FallbackOutsideEnumEntry.kt:17:3: error: @Fallback can only be used on enum entries.
 
-/FallbackOutsideEnumEntry.kt:22:24: error: Unresolved reference '$serializer'.
+/FallbackOutsideEnumEntry.kt:20:24: error: Unresolved reference '$serializer'.

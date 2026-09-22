@@ -27,6 +27,7 @@ has the user-facing behaviour.
 ./gradlew :gradle-plugin:test                      # TestKit scenarios, using blueprint's test framework
 ./gradlew -p build-logic check
 ./gradlew -p sample check                          # end-to-end tests on every backend
+./gradlew :compiler-tests:test -Pfallback.testKotlinVersion=2.4.0   # also works with -p sample check
 ./gradlew detektCheck
 scripts/ktfmt.sh                                   # format files changed since main
 ```
@@ -40,6 +41,9 @@ scripts/ktfmt.sh                                   # format files changed since 
 - `compiler-tests/src/test/data/box` - each file is compiled with our plugin and kotlinx.serialization's, then its
   `box()` runs and must return `"OK"`. `kotlin.test` assertions are available.
 - `compiler-tests/src/test/data/diagnostic` - frontend only. Diagnostics are checked against the inline
-  `<!NAME!>...<!>` markup and the neighbouring `.diag.txt`.
+  `<!NAME!>...<!>` markup and the neighbouring `.diag.txt`. The `.diag.txt` is only checked on the pinned Kotlin
+  version.
 - The suites in `compiler-tests/src/test/java` are generated and checked in. Don't edit them by hand.
-- The Kotlin version is pinned: the plugin and the test framework must match `kotlin` in `gradle/libs.versions.toml`.
+- The build uses `kotlin` in `gradle/libs.versions.toml`. `KOTLIN_VERSIONS` in `gradle.properties` lists the versions
+  that CI tests and the Gradle plugin accepts. Stick to compiler APIs that exist in all of them, and avoid inline
+  compiler helpers, since their bodies get copied into the plugin.

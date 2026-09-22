@@ -7,6 +7,11 @@
     "github>jonapoul/renovate-config:default.json5"
   ],
   "packageRules": [
-    // TBC
+    {
+      // Deliberately unsupported Kotlin version, for the Gradle plugin's version check test
+      "matchFileNames": ["gradle-plugin/build.gradle.kts"],
+      "matchPackageNames": ["org.jetbrains.kotlin:kotlin-gradle-plugin"],
+      "enabled": false
+    }
   ]
 }

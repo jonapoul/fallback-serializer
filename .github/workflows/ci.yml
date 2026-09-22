@@ -175,16 +175,49 @@ jobs:
       - uses: ./.github/actions/report-build-results
         if: ${{ !cancelled() }}
 
-  sample:
-    needs: validation
+  kotlin-versions:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      versions: ${{ steps.read.outputs.versions }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - id: read
+        run: echo "versions=$(sed -n 's/^KOTLIN_VERSIONS=//p' gradle.properties | jq -Rc 'split(",")')" >> "$GITHUB_OUTPUT"
+
+  compiler-compat:
+    name: compiler-tests (Kotlin ${{ matrix.kotlin }})
+    needs: [ validation, kotlin-versions ]
     if: ${{ !cancelled() && needs.validation.result == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        kotlin: ${{ fromJson(needs.kotlin-versions.outputs.versions) }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: ./.github/actions/setup-java
       - uses: ./.github/actions/setup-gradle
-      - run: ./gradlew -p sample check
+      - run: ./gradlew :compiler-tests:test -Pfallback.testKotlinVersion=${{ matrix.kotlin }}
+      - uses: ./.github/actions/report-build-results
+        if: ${{ !cancelled() }}
+
+  sample:
+    name: sample (Kotlin ${{ matrix.kotlin }})
+    needs: [ validation, kotlin-versions ]
+    if: ${{ !cancelled() && needs.validation.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        kotlin: ${{ fromJson(needs.kotlin-versions.outputs.versions) }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/setup-java
+      - uses: ./.github/actions/setup-gradle
+      - run: ./gradlew -p sample check -Pfallback.testKotlinVersion=${{ matrix.kotlin }}
       - uses: ./.github/actions/report-build-results
         if: ${{ !cancelled() }}
 
@@ -212,6 +245,7 @@ jobs:
       - other-checks
       - build-logic
       - publish-local
+      - compiler-compat
       - sample
     runs-on: ubuntu-latest
     steps:
