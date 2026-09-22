@@ -16,7 +16,7 @@ kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 kotlinx-serialization-protobuf = { module = "org.jetbrains.kotlinx:kotlinx-serialization-protobuf", version.ref = "kotlinx-serialization" }
 ktfmt = { module = "com.facebook:ktfmt", version = "0.64" } # only used in ktfmt.sh
-xmlutil = { module = "io.github.pdvrieze.xmlutil:serialization", version = "1.0.2" }
+xmlutil = { module = "io.github.pdvrieze.xmlutil:serialization", version = "1.0.2.1" }
 
 [plugins]
 blueprint-test = { id = "dev.jonpoulton.blueprint.test", version.ref = "blueprint" }
