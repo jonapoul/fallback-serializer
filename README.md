@@ -1,12 +1,15 @@
 # Fallback Serializer
 
 [![Latest release on Maven Central](https://img.shields.io/maven-central/v/dev.jonpoulton.fallbackserializer/dev.jonpoulton.fallbackserializer.gradle.plugin)](https://central.sonatype.com/artifact/dev.jonpoulton.fallbackserializer/dev.jonpoulton.fallbackserializer.gradle.plugin)
+[![License](https://img.shields.io/github/license/jonapoul/fallback-serializer)](LICENSE.txt)
 
 A Kotlin compiler plugin that lets [kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization) enums decode unknown values to a fallback entry instead of throwing `SerializationException`. Useful when a server adds enum values before your clients know about them.
 
 kotlinx.serialization's `coerceInputValues` does a similar function, but it only covers class properties that have a default value. This plugin works is applied to the enum type and therefore works anywhere the enum is decoded, including top-level values and collections.
 
 ## Setup
+
+In `build.gradle.kts`:
 
 ```kotlin
 plugins {
@@ -57,6 +60,8 @@ Encoding the fallback entry uses its own name, so the original value is lost:
 ```kotlin
 Json.encodeToString(Fruit.Unknown) // -> "Unknown", not "Orange"
 ```
+
+The above uses JSON as an example, but this library should support all kotlinx.serialization formats.
 
 ## Guardrails
 
