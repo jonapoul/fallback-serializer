@@ -53,7 +53,11 @@ public open class FallbackEnumSerializer<E : Enum<E>>(
     val index =
       try {
         decoder.decodeEnum(descriptor)
-      } catch (_: SerializationException) {
+      } catch (e: SerializationException) {
+        // Json throws this when two of the enum's names clash, e.g. a @JsonNames alternative that
+        // matches a serial name once lowercased by decodeEnumsCaseInsensitive. It fails for every
+        // input, so falling back would hide the problem and decode every value to the fallback
+        if (e.message?.startsWith("The suggested name '") == true) throw e
         -1
       }
     return if (index >= 0) values[index] else fallbackValue
