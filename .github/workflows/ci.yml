@@ -187,7 +187,15 @@ jobs:
         run: |
           versions=$(sed -n 's/^KOTLIN_VERSIONS=//p' gradle.properties)
           prerelease=$(sed -n 's/^KOTLIN_PRERELEASE=//p' gradle.properties)
-          echo "versions=$(jq -Rc 'split(",")' <<< "$versions")" >> "$GITHUB_OUTPUT"
+          default=$(sed -n 's/^kotlin = "\(.*\)"/\1/p' gradle/libs.versions.toml)
+          # PRs skip .10 and .x1 patch releases, apart from the default and latest versions. Main
+          # tests them all.
+          echo "versions=$(jq -Rc \
+            --arg default "$default" \
+            --argjson pr ${{ github.event_name == 'pull_request' }} \
+            'split(",") | last as $latest | map(select(
+              ($pr | not) or . == $default or . == $latest or (test("^\\d+\\.\\d+\\.(10|\\d*1)$") | not)
+            ))' <<< "$versions")" >> "$GITHUB_OUTPUT"
           # Skipped once the pre-release is a supported version
           if [[ ",$versions," != *",$prerelease,"* ]]; then
             echo "prerelease=$prerelease" >> "$GITHUB_OUTPUT"

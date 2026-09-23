@@ -1,0 +1,71 @@
+name: Kotlin dev
+
+# Tests against the latest Kotlin dev build every day, and raises an issue when it fails
+
+on:
+  schedule:
+    - cron: '0 5 * * *'
+  workflow_dispatch:
+
+env:
+  CI: true
+  GRADLE_ENCRYPTION_KEY: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+
+permissions:
+  contents: read
+
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      kotlin: ${{ steps.latest.outputs.kotlin }}
+    steps:
+      - id: latest
+        run: |
+          kotlin=$(curl -fsSL https://redirector.kotlinlang.org/maven/bootstrap/org/jetbrains/kotlin/kotlin-compiler/maven-metadata.xml \
+            | sed -n 's:.*<version>\(.*-dev-[0-9]*\)</version>.*:\1:p' \
+            | sort -V | tail -n 1)
+          echo "kotlin=$kotlin" >> "$GITHUB_OUTPUT"
+
+  test:
+    name: ${{ matrix.name }} (Kotlin ${{ needs.version.outputs.kotlin }})
+    needs: version
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: compiler-tests
+            command: ./gradlew :compiler-tests:test
+          - name: sample
+            command: ./gradlew -p sample check -Pfallback.skipKotlinVersionCheck=true
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/setup-java
+      - uses: ./.github/actions/setup-gradle
+      - run: ${{ matrix.command }} -Pfallback.testKotlinVersion=${{ needs.version.outputs.kotlin }}
+      - uses: ./.github/actions/report-build-results
+        if: ${{ !cancelled() }}
+
+  # One open issue per version. Once it's closed, a later failure on that version opens a new one.
+  report:
+    needs: [ version, test ]
+    if: ${{ !cancelled() && needs.test.result == 'failure' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      issues: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      TITLE: Tests fail on Kotlin ${{ needs.version.outputs.kotlin }}
+      RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+    steps:
+      - run: |
+          if gh issue list --state open --limit 1000 --json title --jq '.[].title' | grep -Fxq "$TITLE"; then
+            echo "An issue for this version is already open"
+          else
+            gh issue create --title "$TITLE" --body "The daily Kotlin dev build check failed: $RUN_URL"
+          fi
