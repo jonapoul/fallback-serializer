@@ -130,3 +130,41 @@ jobs:
         with:
           generateReleaseNotes: true
           name: v${{ needs.check-version.outputs.version }}
+
+  release-notes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: [ check-version, publish-release ]
+    permissions:
+      contents: write
+      pull-requests: read
+      issues: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      # a failure keeps GitHub's generated notes
+      - uses: anthropics/claude-code-action@3b8197d3d486006dd4af54613517f21ac6ac625e # v1.0.227
+        continue-on-error: true
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          prompt: |
+            REPO: ${{ github.repository }}
+            TAG: ${{ github.ref_name }}
+
+            Rewrite the GitHub release notes for TAG. They currently hold GitHub's generated list of PRs.
+
+            1. Find the previous tag with `git describe --tags --abbrev=0 TAG^`.
+            2. Read the PRs merged between the two tags (`git log`, `gh pr view`, linked issues) and the
+               source diff, ignoring tests and CI.
+            3. Match the style of earlier releases (`gh release view <tag>`): short sections such as
+               "Breaking change", "What's new", "Fixes", "Checks", "Compatibility" and "Testing", only
+               where they apply. Focus on what users of the plugin notice. Reference PR and issue numbers.
+               Keep the "**Full Changelog**" link at the end.
+            4. Save the notes with `gh release edit TAG --notes-file <file>`.
+
+            Use minimal, simple, natural language. Don't use em-dashes. Use README.md and CLAUDE.md for context.
+          claude_args: '--allowed-tools "Read,Write,Grep,Glob,Bash(git log:*),Bash(git diff:*),Bash(git show:*),Bash(git describe:*),Bash(git tag:*),Bash(gh pr view:*),Bash(gh issue view:*),Bash(gh release view:*),Bash(gh release edit:*)"'
