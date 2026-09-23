@@ -11,7 +11,7 @@ val javaFile = layout.projectDirectory.file("../.java-version")
 val jdkVersion = providers.fileContents(javaFile).asText.map { it.trim().toInt() }
 
 kotlin {
-  jvmToolchain(jdkVersion.get())
+  jvmToolchain { languageVersion.set(jdkVersion.map(JavaLanguageVersion::of)) }
   compilerOptions {
     allWarningsAsErrors.set(true)
   }

@@ -118,9 +118,9 @@ tasks.test {
   systemProperty("idea.ignore.disabled.plugins", "true")
   systemProperty("idea.home.path", rootDir.absolutePath)
 
-  classpathProperty(testLibrariesClasspath.get(), "fallback.testLibraries")
+  classpathProperty(files(testLibrariesClasspath), "fallback.testLibraries")
 
-  val runtimeClasspath = configurations.testRuntimeClasspath.get()
+  val runtimeClasspath = files(configurations.testRuntimeClasspath)
   kotlinLibraryProperty(runtimeClasspath, "kotlin-stdlib")
   kotlinLibraryProperty(runtimeClasspath, "kotlin-stdlib-jdk8", "kotlin.full.stdlib.path")
   kotlinLibraryProperty(runtimeClasspath, "kotlin-reflect", "kotlin.reflect.jar.path")
@@ -153,7 +153,7 @@ fun Test.classpathProperty(files: FileCollection, vararg names: String) {
 }
 
 // Passes a Kotlin library jar to the test framework under its standard property name, plus aliases
-fun Test.kotlinLibraryProperty(classpath: Configuration, jarName: String, vararg aliases: String) {
+fun Test.kotlinLibraryProperty(classpath: FileCollection, jarName: String, vararg aliases: String) {
   val regex = Regex("$jarName-\\d.*\\.jar")
   // Filtered lazily, resolving the configuration here breaks KGP's dependency constraints
   val jar = classpath.filter { regex.matches(it.name) }
