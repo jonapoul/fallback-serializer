@@ -1,0 +1,10 @@
+# Kotlin versions that CI tests and the Gradle plugin accepts, in release order. Must include
+# `kotlin` from gradle/libs.versions.toml. PRs skip .10 and .x1 releases, apart from `kotlin` and
+# the last line.
+#
+# Renovate bumps Betas and RCs, so a new pre-release only lands once it passes CI.
+
+2.4.0
+2.4.10
+2.4.20
+2.5.0-Beta1
