@@ -24,7 +24,8 @@
       "ignoreUnstable": false,
       "allowedVersions": "/^\\d+\\.\\d+\\.\\d+(-(Beta|RC)\\d*)?$/",
       "minimumReleaseAge": "0 days",
-      "groupName": "kotlin-prerelease"
+      "groupName": "kotlin-prerelease",
+      "commitMessageTopic": "Kotlin prerelease"
     },
     {
       // Deliberately unsupported Kotlin version, for the Gradle plugin's version check test
