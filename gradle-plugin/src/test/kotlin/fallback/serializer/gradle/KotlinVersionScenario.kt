@@ -3,8 +3,8 @@ package fallback.serializer.gradle
 import blueprint.test.assertThatTask
 import blueprint.test.buildGradleKts
 import blueprint.test.buildsSuccessfully
-import blueprint.test.failsBuild
 import blueprint.test.outputContains
+import blueprint.test.outputDoesNotContain
 import blueprint.test.withGradleProperty
 import kotlin.test.Test
 import org.gradle.testkit.runner.GradleRunner
@@ -28,24 +28,21 @@ class KotlinVersionScenario : FallbackScenarioTest() {
     super.defaultRunner().withPluginClasspath(oldKotlinClasspath)
 
   @Test
-  fun `fails with an unsupported Kotlin version`() = runScenario {
+  fun `warns with an unsupported Kotlin version`() = runScenario {
     assertThatTask(":help")
-      .failsBuild()
+      .buildsSuccessfully()
       .outputContains(
-        "Fallback Serializer $VERSION needs Kotlin ${KOTLIN_VERSIONS.joinToString()}, but root " +
-          "project 'test-project' uses Kotlin 2.3.21"
+        "Fallback Serializer $VERSION is tested against Kotlin ${KOTLIN_VERSIONS.joinToString()}, " +
+          "but root project 'test-project' uses Kotlin 2.3.21. Set " +
+          "fallback.skipKotlinVersionCheck=true to hide this warning"
       )
   }
 
   @Test
-  fun `warns when the version check is skipped`() = runScenario {
+  fun `doesn't warn when the version check is skipped`() = runScenario {
     assertThatTask(":help")
       .withGradleProperty("fallback.skipKotlinVersionCheck", true)
       .buildsSuccessfully()
-      .outputContains(
-        "Fallback Serializer $VERSION needs Kotlin ${KOTLIN_VERSIONS.joinToString()}, but root " +
-          "project 'test-project' uses Kotlin 2.3.21. Continuing, since " +
-          "fallback.skipKotlinVersionCheck is set"
-      )
+      .outputDoesNotContain("is tested against Kotlin")
   }
 }
