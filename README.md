@@ -3,9 +3,16 @@
 [![Latest release on Maven Central](https://img.shields.io/maven-central/v/dev.jonpoulton.fallbackserializer/dev.jonpoulton.fallbackserializer.gradle.plugin)](https://central.sonatype.com/artifact/dev.jonpoulton.fallbackserializer/dev.jonpoulton.fallbackserializer.gradle.plugin)
 [![License](https://img.shields.io/github/license/jonapoul/fallback-serializer)](LICENSE.txt)
 
-A Kotlin compiler plugin that lets [kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization) enums decode unknown values to a fallback entry instead of throwing `SerializationException`. Useful when a server adds enum values before your clients know about them.
+A Kotlin compiler plugin which works alongside [kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization) to make enum decoding more forgiving. Mark one enum entry with `@Fallback` and any unknown name in your input data will decode to it, instead of throwing `SerializationException`.
 
-kotlinx.serialization's `coerceInputValues` does something similar, but it only covers class properties that have a default value. This plugin is applied to the enum type, so it works anywhere the enum is decoded, including top-level values and collections.
+## When is this useful?
+
+When the data you decode can contain enum values your code doesn't know about yet. For example:
+
+- A server or another service starts sending a new enum value before every client knows about it.
+- An older version of your app reads data that a newer version wrote, like a local file that's still there after a downgrade.
+
+kotlinx.serialization's `coerceInputValues` does something similar, but it only covers class properties that have a default value. This plugin is applied to the enum type, so it works anywhere the enum is decoded, including top-level values and collections. One unknown value in a list doesn't stop the rest of it from decoding.
 
 ## Setup
 
@@ -72,7 +79,7 @@ Encoding the fallback entry uses its own name, so the original value is lost:
 Json.encodeToString(OrderStatus.Unknown) // -> "Unknown", not "Refunded"
 ```
 
-The above uses JSON as an example, but this works with all kotlinx.serialization formats.
+The above uses JSON as an example, but this works with other kotlinx.serialization formats too. It's tested with JSON, CBOR, ProtoBuf and [XML](https://github.com/pdvrieze/xmlutil). With ProtoBuf, which encodes enums as numbers, an unknown number decodes to the fallback.
 
 Only unknown strings decode to the fallback. A value of the wrong type, like `123` or `null`, still fails to decode, except with `Json.decodeFromJsonElement`, which decodes it to the fallback too.
 
