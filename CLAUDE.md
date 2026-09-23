@@ -49,3 +49,5 @@ scripts/ktfmt.sh                                   # format files changed since 
   compiler helpers, since their bodies get copied into the plugin.
 - `KOTLIN_PRERELEASE` in `gradle.properties` is the latest Kotlin Beta or RC, bumped by Renovate. CI tests it in a
   non-blocking job, skipped once it's in `KOTLIN_VERSIONS`.
+- `.github/workflows/kotlin-dev.yml` tests the latest Kotlin dev build daily and opens an issue when it fails. Dev
+  versions resolve from JetBrains' bootstrap repo, e.g. `-Pfallback.testKotlinVersion=2.5.0-dev-7359`.

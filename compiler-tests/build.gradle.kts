@@ -86,9 +86,26 @@ tasks.withType<Detekt>().configureEach {
   if (name == "detekt" || name.startsWith("detektTest")) setSource(files("src/test/kotlin"))
 }
 
+val isPinnedKotlin = testKotlinVersion == libs.versions.kotlin.get()
+
+// Other Kotlin versions format the .diag.txt files differently, and newer ones fail if the files
+// exist but aren't checked. So those versions run on a copy of the test data without them.
+val unpinnedRoot = layout.buildDirectory.dir("unpinned-test-root")
+val unpinnedTestData =
+  tasks.register<Sync>("unpinnedTestData") {
+    from(testData)
+    exclude("**/*.diag.txt")
+    into(unpinnedRoot.map { it.dir("compiler-tests/src/test/data") })
+  }
+
 tasks.test {
   inputs.dir(testData).withPropertyName("testData").withPathSensitivity(RELATIVE)
-  workingDir = rootDir
+  if (isPinnedKotlin) {
+    workingDir = rootDir
+  } else {
+    dependsOn(unpinnedTestData)
+    setWorkingDir(unpinnedRoot)
+  }
   maxHeapSize = "2g"
 
   // Pass -PupdateTestData to rewrite the expected diagnostics in src/test/data
@@ -97,7 +114,7 @@ tasks.test {
     outputs.upToDateWhen { false }
   }
 
-  systemProperty("fallback.checkFullDiagnostics", testKotlinVersion == libs.versions.kotlin.get())
+  systemProperty("fallback.checkFullDiagnostics", isPinnedKotlin)
   systemProperty("idea.ignore.disabled.plugins", "true")
   systemProperty("idea.home.path", rootDir.absolutePath)
 

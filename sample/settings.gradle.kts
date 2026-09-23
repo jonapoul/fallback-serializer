@@ -1,14 +1,8 @@
 rootProject.name = "sample"
 
-pluginManagement {
-  repositories {
-    mavenCentral()
-    gradlePluginPortal()
-  }
-}
+apply(from = "../gradle/repositories.gradle.kts")
 
 dependencyResolutionManagement {
-  repositories { mavenCentral() }
   versionCatalogs {
     register("libs") {
       from(files("../gradle/libs.versions.toml"))
