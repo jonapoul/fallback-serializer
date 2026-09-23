@@ -30,6 +30,7 @@ jobs:
       renovate: ${{ steps.filter.outputs.renovate }}
       wrapper: ${{ steps.filter.outputs.wrapper }}
       shell: ${{ steps.filter.outputs.shell }}
+      actions: ${{ steps.filter.outputs.actions }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
@@ -47,6 +48,9 @@ jobs:
               - 'gradlew.bat'
             shell:
               - '**/*.sh'
+            actions:
+              - '.github/workflows/**'
+              - '.github/actions/**'
 
   validate-renovate:
     needs: changed-files
@@ -79,6 +83,17 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - run: shellcheck scripts/*.sh scripts/lib/*.sh
 
+  actionlint:
+    needs: changed-files
+    if: needs.changed-files.outputs.actions == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: docker://rhysd/actionlint:1.7.12@sha256:b1934ee5f1c509618f2508e6eb47ee0d3520686341fec936f3b79331f9315667
+        with:
+          args: -color
+
   betterleaks:
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -106,7 +121,7 @@ jobs:
       - run: scripts/ktfmt.sh check --force
 
   validation:
-    needs: [ changed-files, validate-wrapper, validate-renovate, shellcheck, betterleaks, ktfmt ]
+    needs: [ changed-files, validate-wrapper, validate-renovate, shellcheck, actionlint, betterleaks, ktfmt ]
     if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     steps:
