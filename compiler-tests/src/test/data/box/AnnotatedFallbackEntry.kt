@@ -9,16 +9,16 @@ import kotlinx.serialization.json.JsonNames
 import kotlin.test.assertEquals
 
 @Serializable
-enum class Fruit {
-  Apple,
-  @Fallback @SerialName("unknown") @JsonNames("other") Unknown,
+enum class PaymentMethod {
+  Card,
+  @Fallback @SerialName("unsupported") @JsonNames("other") Unsupported,
 }
 
 fun box(): String {
-  assertEquals("\"unknown\"", Json.encodeToString(Fruit.Unknown))
-  assertEquals(Fruit.Unknown, Json.decodeFromString<Fruit>("\"unknown\""))
-  assertEquals(Fruit.Unknown, Json.decodeFromString<Fruit>("\"other\""))
-  assertEquals(Fruit.Unknown, Json.decodeFromString<Fruit>("\"Orange\""))
-  assertEquals(listOf<Annotation>(JsonNames("other")), Fruit.serializer().descriptor.getElementAnnotations(1))
+  assertEquals("\"unsupported\"", Json.encodeToString(PaymentMethod.Unsupported))
+  assertEquals(PaymentMethod.Unsupported, Json.decodeFromString<PaymentMethod>("\"unsupported\""))
+  assertEquals(PaymentMethod.Unsupported, Json.decodeFromString<PaymentMethod>("\"other\""))
+  assertEquals(PaymentMethod.Unsupported, Json.decodeFromString<PaymentMethod>("\"Crypto\""))
+  assertEquals(listOf<Annotation>(JsonNames("other")), PaymentMethod.serializer().descriptor.getElementAnnotations(1))
   return "OK"
 }

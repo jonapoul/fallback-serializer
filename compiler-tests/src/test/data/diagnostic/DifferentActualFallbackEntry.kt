@@ -6,8 +6,8 @@ import fallback.serializer.Fallback
 import kotlinx.serialization.Serializable
 
 @Serializable
-expect enum class Fruit {
-  Apple,
+expect enum class Weather {
+  Sunny,
   @Fallback Unknown,
   Other,
 }
@@ -18,8 +18,8 @@ import fallback.serializer.Fallback
 import kotlinx.serialization.Serializable
 
 @Serializable
-actual enum class Fruit {
-  Apple,
+actual enum class Weather {
+  Sunny,
   Unknown,
   @Fallback <!DIFFERENT_ACTUAL_FALLBACK_ENTRY!>Other<!>,
 }

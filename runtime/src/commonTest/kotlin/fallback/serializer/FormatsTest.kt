@@ -13,21 +13,24 @@ import nl.adaptivity.xmlutil.serialization.XML
 // Values are encoded with a newer version of the enum, then decoded with the older one
 @OptIn(ExperimentalSerializationApi::class)
 class FormatsTest {
-  private enum class Fruit {
-    Apple,
-    Unknown,
+  private enum class HttpMethod {
+    GET,
+    Other,
   }
 
-  private enum class ServerFruit {
-    Apple,
-    Unknown,
-    Orange,
+  private enum class ServerHttpMethod {
+    GET,
+    Other,
+    PATCH,
   }
 
   private val client =
-    FallbackEnumSerializer<Fruit>(serialName = "Fruit", fallbackValue = Fruit.Unknown)
+    FallbackEnumSerializer<HttpMethod>(serialName = "HttpMethod", fallbackValue = HttpMethod.Other)
   private val server =
-    FallbackEnumSerializer<ServerFruit>(serialName = "Fruit", fallbackValue = ServerFruit.Unknown)
+    FallbackEnumSerializer<ServerHttpMethod>(
+      serialName = "HttpMethod",
+      fallbackValue = ServerHttpMethod.Other,
+    )
 
   @Test fun `decodes unknown cbor value as fallback`() = checkBinary(Cbor)
 
@@ -38,18 +41,21 @@ class FormatsTest {
 
   private fun checkBinary(format: BinaryFormat) {
     assertEquals(
-      expected = Fruit.Unknown,
+      expected = HttpMethod.Other,
       actual =
-        format.decodeFromByteArray(client, format.encodeToByteArray(server, ServerFruit.Orange)),
+        format.decodeFromByteArray(
+          client,
+          format.encodeToByteArray(server, ServerHttpMethod.PATCH),
+        ),
     )
     assertEquals(
-      expected = listOf(Fruit.Unknown, Fruit.Apple),
+      expected = listOf(HttpMethod.Other, HttpMethod.GET),
       actual =
         format.decodeFromByteArray(
           ListSerializer(client),
           format.encodeToByteArray(
             ListSerializer(server),
-            listOf(ServerFruit.Orange, ServerFruit.Apple),
+            listOf(ServerHttpMethod.PATCH, ServerHttpMethod.GET),
           ),
         ),
     )
@@ -57,17 +63,18 @@ class FormatsTest {
 
   private fun checkString(format: StringFormat) {
     assertEquals(
-      expected = Fruit.Unknown,
-      actual = format.decodeFromString(client, format.encodeToString(server, ServerFruit.Orange)),
+      expected = HttpMethod.Other,
+      actual =
+        format.decodeFromString(client, format.encodeToString(server, ServerHttpMethod.PATCH)),
     )
     assertEquals(
-      expected = listOf(Fruit.Unknown, Fruit.Apple),
+      expected = listOf(HttpMethod.Other, HttpMethod.GET),
       actual =
         format.decodeFromString(
           ListSerializer(client),
           format.encodeToString(
             ListSerializer(server),
-            listOf(ServerFruit.Orange, ServerFruit.Apple),
+            listOf(ServerHttpMethod.PATCH, ServerHttpMethod.GET),
           ),
         ),
     )

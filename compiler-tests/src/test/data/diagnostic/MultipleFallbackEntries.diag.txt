@@ -1,3 +1,3 @@
-/MultipleFallbackEntries.kt:8:13: error: Enum class 'Fruit' can only have one @Fallback entry, 'Unknown' is already annotated.
+/MultipleFallbackEntries.kt:8:13: error: Enum class 'HttpMethod' can only have one @Fallback entry, 'Other' is already annotated.
 
-/MultipleFallbackEntries.kt:9:13: error: Enum class 'Fruit' can only have one @Fallback entry, 'Unknown' is already annotated.
+/MultipleFallbackEntries.kt:9:13: error: Enum class 'HttpMethod' can only have one @Fallback entry, 'Other' is already annotated.

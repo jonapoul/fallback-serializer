@@ -4,20 +4,21 @@ import kotlinx.serialization.json.Json
 import kotlin.test.assertEquals
 
 @Serializable
-enum class Fruit {
-  Apple,
+enum class Weather {
+  Sunny,
+  Cloudy,
   @Fallback Unknown,
 }
 
 fun box(): String {
   // Unknown values all decode to the same entry, so later ones replace earlier ones
   assertEquals(
-    mapOf(Fruit.Apple to 0, Fruit.Unknown to 2),
-    Json.decodeFromString<Map<Fruit, Int>>("""{"Apple":0,"Orange":1,"Mango":2}"""),
+    mapOf(Weather.Sunny to 0, Weather.Unknown to 2),
+    Json.decodeFromString<Map<Weather, Int>>("""{"Sunny":0,"Hail":1,"Snow":2}"""),
   )
   assertEquals(
-    setOf(Fruit.Apple, Fruit.Unknown),
-    Json.decodeFromString<Set<Fruit>>("""["Apple","Orange","Mango"]"""),
+    setOf(Weather.Sunny, Weather.Unknown),
+    Json.decodeFromString<Set<Weather>>("""["Sunny","Hail","Snow"]"""),
   )
   return "OK"
 }

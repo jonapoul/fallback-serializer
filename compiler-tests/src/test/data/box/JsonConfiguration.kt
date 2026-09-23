@@ -9,22 +9,23 @@ import kotlinx.serialization.json.JsonNames
 import kotlin.test.assertEquals
 
 @Serializable
-enum class Fruit {
-  @JsonNames("pomme") Apple,
-  @SerialName("cherry_pie") Cherry,
-  @Fallback Unknown,
+enum class Platform {
+  @SerialName("android") Android,
+  @SerialName("ios") Ios,
+  @JsonNames("browser") Web,
+  @Fallback Other,
 }
 
 fun box(): String {
   val caseInsensitive = Json { decodeEnumsCaseInsensitive = true }
-  assertEquals(Fruit.Apple, caseInsensitive.decodeFromString<Fruit>("\"APPLE\""))
-  assertEquals(Fruit.Apple, caseInsensitive.decodeFromString<Fruit>("\"POMME\""))
-  assertEquals(Fruit.Cherry, caseInsensitive.decodeFromString<Fruit>("\"Cherry_Pie\""))
-  assertEquals(Fruit.Unknown, caseInsensitive.decodeFromString<Fruit>("\"Orange\""))
-  assertEquals(Fruit.Unknown, Json.decodeFromString<Fruit>("\"APPLE\""))
+  assertEquals(Platform.Web, caseInsensitive.decodeFromString<Platform>("\"WEB\""))
+  assertEquals(Platform.Web, caseInsensitive.decodeFromString<Platform>("\"BROWSER\""))
+  assertEquals(Platform.Ios, caseInsensitive.decodeFromString<Platform>("\"IOS\""))
+  assertEquals(Platform.Other, caseInsensitive.decodeFromString<Platform>("\"Watch\""))
+  assertEquals(Platform.Other, Json.decodeFromString<Platform>("\"WEB\""))
 
   val noAlternativeNames = Json { useAlternativeNames = false }
-  assertEquals(Fruit.Apple, Json.decodeFromString<Fruit>("\"pomme\""))
-  assertEquals(Fruit.Unknown, noAlternativeNames.decodeFromString<Fruit>("\"pomme\""))
+  assertEquals(Platform.Web, Json.decodeFromString<Platform>("\"browser\""))
+  assertEquals(Platform.Other, noAlternativeNames.decodeFromString<Platform>("\"browser\""))
   return "OK"
 }

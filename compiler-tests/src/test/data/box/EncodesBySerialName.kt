@@ -5,15 +5,17 @@ import kotlinx.serialization.json.Json
 import kotlin.test.assertEquals
 
 @Serializable
-enum class Fruit {
-  Apple,
-  @SerialName("cherry_pie") Cherry,
+enum class Currency {
+  @SerialName("GBP") PoundSterling,
+  @SerialName("EUR") Euro,
+  Dollar,
   @Fallback Unknown,
 }
 
 fun box(): String {
-  assertEquals("\"Apple\"", Json.encodeToString<Fruit>(Fruit.Apple))
-  assertEquals("\"cherry_pie\"", Json.encodeToString<Fruit>(Fruit.Cherry))
-  assertEquals("\"Unknown\"", Json.encodeToString<Fruit>(Fruit.Unknown))
+  assertEquals("\"GBP\"", Json.encodeToString<Currency>(Currency.PoundSterling))
+  assertEquals("\"EUR\"", Json.encodeToString<Currency>(Currency.Euro))
+  assertEquals("\"Dollar\"", Json.encodeToString<Currency>(Currency.Dollar))
+  assertEquals("\"Unknown\"", Json.encodeToString<Currency>(Currency.Unknown))
   return "OK"
 }

@@ -4,21 +4,22 @@ import kotlinx.serialization.json.Json
 import kotlin.test.assertEquals
 
 @Serializable
-enum class Fruit {
-  Apple {
-    override val colour = "red"
+enum class PaymentMethod {
+  Card {
+    override val code = "CARD"
   },
   @Fallback
-  Unknown {
-    override val colour = "none"
+  Unsupported {
+    override val code = "?"
   };
 
-  abstract val colour: String
+  abstract val code: String
 }
 
 fun box(): String {
-  assertEquals(Fruit.Apple, Json.decodeFromString<Fruit>("\"Apple\""))
-  assertEquals(Fruit.Unknown, Json.decodeFromString<Fruit>("\"Orange\""))
-  assertEquals("\"Unknown\"", Json.encodeToString(Fruit.Unknown))
+  assertEquals(PaymentMethod.Card, Json.decodeFromString<PaymentMethod>("\"Card\""))
+  assertEquals(PaymentMethod.Unsupported, Json.decodeFromString<PaymentMethod>("\"Crypto\""))
+  assertEquals("?", Json.decodeFromString<PaymentMethod>("\"Crypto\"").code)
+  assertEquals("\"Unsupported\"", Json.encodeToString(PaymentMethod.Unsupported))
   return "OK"
 }

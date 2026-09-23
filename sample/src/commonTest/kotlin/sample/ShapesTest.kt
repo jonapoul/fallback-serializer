@@ -37,7 +37,7 @@ class ShapesTest {
   @Test
   fun `decodes map keys`() =
     assertEquals(
-      expected = mapOf(Fruit.Apple to 1, Fruit.Unknown to 2),
-      actual = Json.decodeFromString<Map<Fruit, Int>>("""{"Apple":1,"Orange":2}"""),
+      expected = mapOf(OrderStatus.Pending to 1, OrderStatus.Unknown to 2),
+      actual = Json.decodeFromString<Map<OrderStatus, Int>>("""{"Pending":1,"Refunded":2}"""),
     )
 }

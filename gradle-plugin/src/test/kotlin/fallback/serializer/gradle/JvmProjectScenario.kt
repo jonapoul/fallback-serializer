@@ -38,13 +38,13 @@ class JvmProjectScenario : FallbackScenarioTest() {
       import kotlinx.serialization.json.Json
 
       @Serializable
-      enum class Fruit {
-        Apple,
-        @Fallback Unknown,
+      enum class LogLevel {
+        Info,
+        @Fallback Unrecognised,
       }
 
       fun main() {
-        println("Decoded: " + Json.decodeFromString<Fruit>("\"Orange\""))
+        println("Decoded: " + Json.decodeFromString<LogLevel>("\"Trace\""))
       }
       """
         .trimIndent()
@@ -56,7 +56,7 @@ class JvmProjectScenario : FallbackScenarioTest() {
   fun `compiles and uses the generated serializer`() = runScenario {
     assertThatTask(":run")
       .buildsSuccessfully()
-      .outputContains("Decoded: Unknown")
+      .outputContains("Decoded: Unrecognised")
       .outputDoesNotContain("generated serializers won't be used")
   }
 }

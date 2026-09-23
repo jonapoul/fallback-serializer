@@ -6,9 +6,10 @@ import fallback.serializer.Fallback
 import kotlinx.serialization.Serializable
 
 @Serializable
-enum class Fruit {
-  Apple,
-  @Fallback Unknown,
+enum class HttpMethod {
+  GET,
+  POST,
+  @Fallback Other,
 }
 
 // MODULE: main(lib)
@@ -18,14 +19,14 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
-import lib.Fruit
+import lib.HttpMethod
 
-@Serializable data class Order(val fruit: Fruit)
+@Serializable data class Request(val method: HttpMethod)
 
 // The enum is compiled in another module, so its serializer is only found from the compiled class
 fun box(): String {
-  assertIs<FallbackEnumSerializer<*>>(Fruit.serializer())
-  assertEquals(Fruit.Unknown, Json.decodeFromString<Fruit>("\"Orange\""))
-  assertEquals(Order(Fruit.Unknown), Json.decodeFromString<Order>("""{"fruit":"Orange"}"""))
+  assertIs<FallbackEnumSerializer<*>>(HttpMethod.serializer())
+  assertEquals(HttpMethod.Other, Json.decodeFromString<HttpMethod>("\"PATCH\""))
+  assertEquals(Request(HttpMethod.Other), Json.decodeFromString<Request>("""{"method":"PATCH"}"""))
   return "OK"
 }
