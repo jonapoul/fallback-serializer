@@ -15,11 +15,14 @@ plugins {
   id("fallback.convention")
 }
 
-val kotlinVersions = providers.gradleProperty("KOTLIN_VERSIONS").map { it.split(",") }
+val kotlinVersions =
+  providers.fileContents(layout.settingsDirectory.file("kotlin-versions.txt")).asText.map { text ->
+    text.lines().map { it.trim() }.filter { it.isNotEmpty() && !it.startsWith("#") }
+  }
 
 afterEvaluate {
   check(libs.versions.kotlin.get() in kotlinVersions.get()) {
-    "KOTLIN_VERSIONS in gradle.properties is missing Kotlin ${libs.versions.kotlin.get()}"
+    "kotlin-versions.txt is missing Kotlin ${libs.versions.kotlin.get()}"
   }
 }
 

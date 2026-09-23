@@ -8,10 +8,10 @@
   ],
   "customManagers": [
     {
-      // Kotlin pre-release that CI tests against, see gradle.properties
+      // Kotlin pre-release in kotlin-versions.txt
       "customType": "regex",
-      "managerFilePatterns": ["/^gradle\\.properties$/"],
-      "matchStrings": ["KOTLIN_PRERELEASE=(?<currentValue>\\S+)"],
+      "managerFilePatterns": ["/^kotlin-versions\\.txt$/"],
+      "matchStrings": ["(?m)^(?<currentValue>\\d+\\.\\d+\\.\\d+-(Beta|RC)\\d*)$"],
       "depNameTemplate": "org.jetbrains.kotlin:kotlin-compiler",
       "datasourceTemplate": "maven"
     }
