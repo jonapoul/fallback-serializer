@@ -8,13 +8,13 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonNames
 
-@SerialName("fruit")
+@SerialName("order_status")
 @Serializable
-enum class Fruit {
-  Apple,
-  @SerialName("cherry_pie") Cherry,
-  @JsonNames("banana") Banana,
+enum class OrderStatus {
+  Pending,
+  @SerialName("in_transit") Shipped,
+  @JsonNames("complete") Delivered,
   @Fallback Unknown,
 }
 
-@Serializable data class Basket(val fruit: List<Fruit>)
+@Serializable data class Order(val history: List<OrderStatus>)

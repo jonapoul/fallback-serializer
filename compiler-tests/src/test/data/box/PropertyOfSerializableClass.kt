@@ -4,15 +4,16 @@ import kotlinx.serialization.json.Json
 import kotlin.test.assertEquals
 
 @Serializable
-enum class Fruit {
-  Apple,
-  @Fallback Unknown,
+enum class Permission {
+  Read,
+  Write,
+  @Fallback None,
 }
 
-@Serializable data class Order(val fruit: Fruit, val extras: List<Fruit>)
+@Serializable data class User(val role: Permission, val extras: List<Permission>)
 
 fun box(): String {
-  val order = Json.decodeFromString<Order>("""{"fruit":"Orange","extras":["Apple","Mango"]}""")
-  assertEquals(Order(Fruit.Unknown, listOf(Fruit.Apple, Fruit.Unknown)), order)
+  val user = Json.decodeFromString<User>("""{"role":"Owner","extras":["Read","Delete"]}""")
+  assertEquals(User(Permission.None, listOf(Permission.Read, Permission.None)), user)
   return "OK"
 }

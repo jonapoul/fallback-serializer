@@ -4,17 +4,17 @@ import kotlinx.serialization.json.Json
 import kotlin.test.assertEquals
 
 @Serializable
-enum class Fruit {
-  Apple,
+enum class OrderStatus {
+  Pending,
   @Fallback Unknown,
 }
 
-@Serializable data class Order(val withDefault: Fruit = Fruit.Apple, val withoutDefault: Fruit)
+@Serializable data class Order(val withDefault: OrderStatus = OrderStatus.Pending, val withoutDefault: OrderStatus)
 
 fun box(): String {
   val json = Json { coerceInputValues = true }
-  val order = json.decodeFromString<Order>("""{"withDefault":"Orange","withoutDefault":"Orange"}""")
+  val order = json.decodeFromString<Order>("""{"withDefault":"Refunded","withoutDefault":"Refunded"}""")
   // Json swaps unknown values for the property's default before the serializer runs
-  assertEquals(Order(withDefault = Fruit.Apple, withoutDefault = Fruit.Unknown), order)
+  assertEquals(Order(withDefault = OrderStatus.Pending, withoutDefault = OrderStatus.Unknown), order)
   return "OK"
 }

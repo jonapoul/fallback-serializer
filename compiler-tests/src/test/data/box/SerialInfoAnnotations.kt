@@ -13,24 +13,24 @@ import kotlin.test.assertEquals
 @Target(AnnotationTarget.CLASS)
 annotation class Tag(val value: String)
 
-@Tag("fruit")
+@Tag("payment")
 @Serializable
-enum class Fruit {
-  @JsonNames("apple", "APPLE") Apple,
-  @SerialName("cherry_pie") @JsonNames("cherry") Cherry,
-  @Fallback Unknown,
+enum class PaymentMethod {
+  @JsonNames("card", "CARD") Card,
+  @SerialName("bank_transfer") @JsonNames("bank") BankTransfer,
+  @Fallback Unsupported,
 }
 
 fun box(): String {
-  val descriptor = Fruit.serializer().descriptor
-  assertEquals(listOf<Annotation>(Tag("fruit")), descriptor.annotations)
-  assertEquals(listOf<Annotation>(JsonNames("apple", "APPLE")), descriptor.getElementAnnotations(0))
+  val descriptor = PaymentMethod.serializer().descriptor
+  assertEquals(listOf<Annotation>(Tag("payment")), descriptor.annotations)
+  assertEquals(listOf<Annotation>(JsonNames("card", "CARD")), descriptor.getElementAnnotations(0))
   // Annotations without @SerialInfo, like @SerialName and @Fallback, aren't included
-  assertEquals(listOf<Annotation>(JsonNames("cherry")), descriptor.getElementAnnotations(1))
+  assertEquals(listOf<Annotation>(JsonNames("bank")), descriptor.getElementAnnotations(1))
   assertEquals(emptyList(), descriptor.getElementAnnotations(2))
 
-  assertEquals(Fruit.Apple, Json.decodeFromString<Fruit>("\"APPLE\""))
-  assertEquals(Fruit.Cherry, Json.decodeFromString<Fruit>("\"cherry\""))
-  assertEquals(Fruit.Unknown, Json.decodeFromString<Fruit>("\"Orange\""))
+  assertEquals(PaymentMethod.Card, Json.decodeFromString<PaymentMethod>("\"CARD\""))
+  assertEquals(PaymentMethod.BankTransfer, Json.decodeFromString<PaymentMethod>("\"bank\""))
+  assertEquals(PaymentMethod.Unsupported, Json.decodeFromString<PaymentMethod>("\"Crypto\""))
   return "OK"
 }

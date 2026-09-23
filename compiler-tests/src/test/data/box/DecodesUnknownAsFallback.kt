@@ -5,16 +5,17 @@ import kotlinx.serialization.json.Json
 import kotlin.test.assertEquals
 
 @Serializable
-enum class Fruit {
-  Apple,
-  @SerialName("cherry_pie") Cherry,
+enum class OrderStatus {
+  Pending,
+  @SerialName("in_transit") Shipped,
+  Delivered,
   @Fallback Unknown,
 }
 
 fun box(): String {
-  assertEquals(Fruit.Unknown, Json.decodeFromString<Fruit>("\"Orange\""))
-  assertEquals(Fruit.Unknown, Json.decodeFromString(Fruit.serializer(), "\"Orange\""))
+  assertEquals(OrderStatus.Unknown, Json.decodeFromString<OrderStatus>("\"Refunded\""))
+  assertEquals(OrderStatus.Unknown, Json.decodeFromString(OrderStatus.serializer(), "\"Refunded\""))
   // Entries with a @SerialName don't decode from their declared name
-  assertEquals(Fruit.Unknown, Json.decodeFromString<Fruit>("\"Cherry\""))
+  assertEquals(OrderStatus.Unknown, Json.decodeFromString<OrderStatus>("\"Shipped\""))
   return "OK"
 }

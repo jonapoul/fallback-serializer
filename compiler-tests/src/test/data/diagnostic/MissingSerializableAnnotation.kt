@@ -1,6 +1,6 @@
 import fallback.serializer.Fallback
 
-<!MISSING_SERIALIZABLE!>enum class Fruit<!> {
-  Apple,
-  @Fallback Unknown,
+<!MISSING_SERIALIZABLE!>enum class Permission<!> {
+  Read,
+  @Fallback None,
 }

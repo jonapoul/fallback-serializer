@@ -6,7 +6,7 @@ import kotlin.test.assertEquals
 @Serializable
 enum class FallbackFirst {
   @Fallback Unknown,
-  Apple,
+  Sunny,
 }
 
 @Serializable
@@ -15,10 +15,10 @@ enum class FallbackOnly {
 }
 
 fun box(): String {
-  assertEquals(FallbackFirst.Apple, Json.decodeFromString<FallbackFirst>("\"Apple\""))
-  assertEquals(FallbackFirst.Unknown, Json.decodeFromString<FallbackFirst>("\"Orange\""))
-  assertEquals("\"Apple\"", Json.encodeToString(FallbackFirst.Apple))
+  assertEquals(FallbackFirst.Sunny, Json.decodeFromString<FallbackFirst>("\"Sunny\""))
+  assertEquals(FallbackFirst.Unknown, Json.decodeFromString<FallbackFirst>("\"Hail\""))
+  assertEquals("\"Sunny\"", Json.encodeToString(FallbackFirst.Sunny))
   assertEquals(FallbackOnly.Unknown, Json.decodeFromString<FallbackOnly>("\"Unknown\""))
-  assertEquals(FallbackOnly.Unknown, Json.decodeFromString<FallbackOnly>("\"Orange\""))
+  assertEquals(FallbackOnly.Unknown, Json.decodeFromString<FallbackOnly>("\"Hail\""))
   return "OK"
 }

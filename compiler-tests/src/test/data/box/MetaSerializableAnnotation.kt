@@ -12,13 +12,13 @@ import kotlin.test.assertIs
 
 // An annotation marked with @MetaSerializable counts as @Serializable
 @ApiModel
-enum class Fruit {
-  Apple,
-  @Fallback Unknown,
+enum class Permission {
+  Read,
+  @Fallback None,
 }
 
 fun box(): String {
-  assertIs<FallbackEnumSerializer<*>>(Fruit.serializer())
-  assertEquals(Fruit.Unknown, Json.decodeFromString<Fruit>("\"Orange\""))
+  assertIs<FallbackEnumSerializer<*>>(Permission.serializer())
+  assertEquals(Permission.None, Json.decodeFromString<Permission>("\"Owner\""))
   return "OK"
 }

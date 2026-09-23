@@ -1,6 +1,6 @@
-/platform.kt:20:8: error: Actual enum class 'Fruit' needs a @Fallback entry, since the expect enum marks 'Unknown' with @Fallback.
+/platform.kt:20:8: error: Actual enum class 'OrderStatus' needs a @Fallback entry, since the expect enum marks 'Unknown' with @Fallback.
 
-/platform.kt:20:19: error: 'actual enum class Fruit : Enum<Fruit>' has no corresponding members for 'expect' class members:
+/platform.kt:20:19: error: 'actual enum class OrderStatus : Enum<OrderStatus>' has no corresponding members for 'expect' class members:
 
-    expect object $serializer : FallbackEnumSerializer<Fruit>
+    expect object $serializer : FallbackEnumSerializer<OrderStatus>
 

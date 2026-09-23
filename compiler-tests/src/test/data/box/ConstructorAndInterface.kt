@@ -3,19 +3,20 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlin.test.assertEquals
 
-interface Coded {
-  val code: Int
+interface Prioritised {
+  val priority: Int
 }
 
 @Serializable
-enum class Fruit(override val code: Int) : Coded {
-  Apple(1),
-  @Fallback Unknown(0),
+enum class LogLevel(override val priority: Int) : Prioritised {
+  Debug(10),
+  Info(20),
+  @Fallback Unrecognised(0),
 }
 
 fun box(): String {
-  assertEquals(Fruit.Apple, Json.decodeFromString<Fruit>("\"Apple\""))
-  assertEquals(Fruit.Unknown, Json.decodeFromString<Fruit>("\"Orange\""))
-  assertEquals(0, Json.decodeFromString<Fruit>("\"Orange\"").code)
+  assertEquals(LogLevel.Info, Json.decodeFromString<LogLevel>("\"Info\""))
+  assertEquals(LogLevel.Unrecognised, Json.decodeFromString<LogLevel>("\"Trace\""))
+  assertEquals(0, Json.decodeFromString<LogLevel>("\"Trace\"").priority)
   return "OK"
 }

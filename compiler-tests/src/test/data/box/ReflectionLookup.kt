@@ -11,16 +11,17 @@ import kotlin.test.assertEquals
 import kotlin.test.assertIs
 
 @Serializable
-enum class Fruit {
-  Apple,
-  @Fallback Unknown,
+enum class LogLevel {
+  Warn,
+  Error,
+  @Fallback Unrecognised,
 }
 
 // Serializers looked up at runtime, like when the type isn't known at compile time
 fun box(): String {
-  assertIs<FallbackEnumSerializer<*>>(Fruit::class.serializer())
-  assertIs<FallbackEnumSerializer<*>>(serializer(Fruit::class.java))
-  assertIs<FallbackEnumSerializer<*>>(serializer(typeOf<Fruit>()))
-  assertEquals(Fruit.Unknown, Json.decodeFromString(serializer(typeOf<Fruit?>()), "\"Orange\""))
+  assertIs<FallbackEnumSerializer<*>>(LogLevel::class.serializer())
+  assertIs<FallbackEnumSerializer<*>>(serializer(LogLevel::class.java))
+  assertIs<FallbackEnumSerializer<*>>(serializer(typeOf<LogLevel>()))
+  assertEquals(LogLevel.Unrecognised, Json.decodeFromString(serializer(typeOf<LogLevel?>()), "\"Trace\""))
   return "OK"
 }

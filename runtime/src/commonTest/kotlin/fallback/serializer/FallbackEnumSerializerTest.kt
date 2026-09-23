@@ -13,61 +13,61 @@ import kotlinx.serialization.json.JsonNull
 
 @OptIn(ExperimentalSerializationApi::class)
 class FallbackEnumSerializerTest {
-  private enum class Fruit {
-    Apple,
-    @SerialName("cherry_pie") Cherry,
+  private enum class OrderStatus {
+    Pending,
+    @SerialName("in_transit") Shipped,
     Unknown,
   }
 
   // Hand-written equivalent of the compiler plugin's output
-  private object FruitSerializer :
-    FallbackEnumSerializer<Fruit>(
-      serialName = "Fruit",
-      values = Fruit.entries.toTypedArray(),
-      valueSerialNames = mapOf(Fruit.Cherry to "cherry_pie"),
+  private object StatusSerializer :
+    FallbackEnumSerializer<OrderStatus>(
+      serialName = "OrderStatus",
+      values = OrderStatus.entries.toTypedArray(),
+      valueSerialNames = mapOf(OrderStatus.Shipped to "in_transit"),
       fallbackValue = Unknown,
     )
 
-  @Test fun `decodes by name`() = assertEquals(expected = Apple, actual = decode("Apple"))
+  @Test fun `decodes by name`() = assertEquals(expected = Pending, actual = decode("Pending"))
 
   @Test
-  fun `decodes by serial name`() = assertEquals(expected = Cherry, actual = decode("cherry_pie"))
+  fun `decodes by serial name`() = assertEquals(expected = Shipped, actual = decode("in_transit"))
 
   @Test
   fun `decodes unrecognised value as fallback`() =
-    assertEquals(expected = Unknown, actual = decode("Orange"))
+    assertEquals(expected = Unknown, actual = decode("Refunded"))
 
   @Test
   fun `decodes empty input as fallback`() =
-    assertEquals(expected = Unknown, actual = Json.decodeFromString(FruitSerializer, ""))
+    assertEquals(expected = Unknown, actual = Json.decodeFromString(StatusSerializer, ""))
 
   @Test
   fun `decodes json null as fallback`() =
     assertEquals(
       expected = Unknown,
-      actual = Json.decodeFromJsonElement(FruitSerializer, JsonNull),
+      actual = Json.decodeFromJsonElement(StatusSerializer, JsonNull),
     )
 
   // The fallback only covers unknown strings. Decoding from a string fails partway through any
   // other value, but a JsonElement has already been parsed, so there's nothing left half-read.
   @Test
   fun `fails to decode non-string values in a string`() {
-    for (value in listOf("123", "true", "null", "{\"a\":1}", "[\"Apple\"]")) {
+    for (value in listOf("123", "true", "null", "{\"a\":1}", "[\"Pending\"]")) {
       assertFailsWith<SerializationException>(value) {
-        Json.decodeFromString(ListSerializer(FruitSerializer), "[$value,\"Apple\"]")
+        Json.decodeFromString(ListSerializer(StatusSerializer), "[$value,\"Pending\"]")
       }
     }
   }
 
   @Test
   fun `decodes non-string json elements as fallback`() {
-    for (value in listOf("123", "true", "null", "{\"a\":1}", "[\"Apple\"]")) {
+    for (value in listOf("123", "true", "null", "{\"a\":1}", "[\"Pending\"]")) {
       assertEquals(
-        expected = listOf(Unknown, Apple),
+        expected = listOf(Unknown, Pending),
         actual =
           Json.decodeFromJsonElement(
-            ListSerializer(FruitSerializer),
-            Json.parseToJsonElement("[$value,\"Apple\"]"),
+            ListSerializer(StatusSerializer),
+            Json.parseToJsonElement("[$value,\"Pending\"]"),
           ),
         message = value,
       )
@@ -76,7 +76,7 @@ class FallbackEnumSerializerTest {
 
   @Test
   fun `encodes by serial name`() =
-    assertEquals(expected = "\"cherry_pie\"", actual = encode(Cherry))
+    assertEquals(expected = "\"in_transit\"", actual = encode(Shipped))
 
   @Test
   fun `encodes fallback by name`() =
@@ -84,14 +84,14 @@ class FallbackEnumSerializerTest {
 
   @Test
   fun `descriptor uses serial name`() =
-    assertEquals(expected = "Fruit", actual = FruitSerializer.descriptor.serialName)
+    assertEquals(expected = "OrderStatus", actual = StatusSerializer.descriptor.serialName)
 
   @Test
   fun `descriptor has an element per value`() {
-    val descriptor = FruitSerializer.descriptor
+    val descriptor = StatusSerializer.descriptor
     assertEquals(expected = 3, actual = descriptor.elementsCount)
     assertEquals(
-      expected = listOf("Apple", "cherry_pie", "Unknown"),
+      expected = listOf("Pending", "in_transit", "Unknown"),
       actual = List(descriptor.elementsCount, descriptor::getElementName),
     )
   }
@@ -100,46 +100,54 @@ class FallbackEnumSerializerTest {
   fun `fails to encode a value missing from values`() {
     val serializer =
       FallbackEnumSerializer(
-        serialName = "Fruit",
-        values = arrayOf(Fruit.Apple, Fruit.Unknown),
+        serialName = "OrderStatus",
+        values = arrayOf(OrderStatus.Pending, OrderStatus.Unknown),
         valueSerialNames = emptyMap(),
-        fallbackValue = Fruit.Unknown,
+        fallbackValue = OrderStatus.Unknown,
       )
     val error =
-      assertFailsWith<IllegalStateException> { Json.encodeToString(serializer, Fruit.Cherry) }
+      assertFailsWith<IllegalStateException> {
+        Json.encodeToString(serializer, OrderStatus.Shipped)
+      }
     assertEquals(
-      expected = "Cherry is not a valid enum Fruit, must be one of [Apple, Unknown]",
+      expected = "Shipped is not a valid enum OrderStatus, must be one of [Pending, Unknown]",
       actual = error.message,
     )
   }
 
   @Test
   fun `toString includes serial name`() =
-    assertEquals(expected = "FallbackEnumSerializer<Fruit>", actual = FruitSerializer.toString())
+    assertEquals(
+      expected = "FallbackEnumSerializer<OrderStatus>",
+      actual = StatusSerializer.toString(),
+    )
 
   @Test
   fun `decodes by alternative name`() {
     val serializer =
-      FallbackEnumSerializer<Fruit>(
-        serialName = "Fruit",
+      FallbackEnumSerializer<OrderStatus>(
+        serialName = "OrderStatus",
         fallbackValue = Unknown,
-        valueAnnotations = mapOf(Fruit.Apple to listOf(JsonNames("apple"))),
+        valueAnnotations = mapOf(OrderStatus.Pending to listOf(JsonNames("pending"))),
       )
-    assertEquals(expected = Fruit.Apple, actual = Json.decodeFromString(serializer, "\"apple\""))
+    assertEquals(
+      expected = OrderStatus.Pending,
+      actual = Json.decodeFromString(serializer, "\"pending\""),
+    )
   }
 
   @Test
   fun `descriptor has annotations`() {
     val serializer =
-      FallbackEnumSerializer<Fruit>(
-        serialName = "Fruit",
+      FallbackEnumSerializer<OrderStatus>(
+        serialName = "OrderStatus",
         fallbackValue = Unknown,
-        valueAnnotations = mapOf(Fruit.Apple to listOf(JsonNames("apple"))),
-        annotations = listOf(JsonNames("fruit")),
+        valueAnnotations = mapOf(OrderStatus.Pending to listOf(JsonNames("pending"))),
+        annotations = listOf(JsonNames("status")),
       )
-    assertEquals(expected = listOf(JsonNames("fruit")), actual = serializer.descriptor.annotations)
+    assertEquals(expected = listOf(JsonNames("status")), actual = serializer.descriptor.annotations)
     assertEquals(
-      expected = listOf(JsonNames("apple")),
+      expected = listOf(JsonNames("pending")),
       actual = serializer.descriptor.getElementAnnotations(0),
     )
     assertEquals(expected = emptyList(), actual = serializer.descriptor.getElementAnnotations(1))
@@ -147,15 +155,20 @@ class FallbackEnumSerializerTest {
 
   @Test
   fun `invoke uses defaults`() {
-    val serializer = FallbackEnumSerializer<Fruit>(serialName = "Fruit", fallbackValue = Unknown)
-    assertEquals(expected = Fruit.Cherry, actual = Json.decodeFromString(serializer, "\"Cherry\""))
+    val serializer =
+      FallbackEnumSerializer<OrderStatus>(serialName = "OrderStatus", fallbackValue = Unknown)
     assertEquals(
-      expected = Fruit.Unknown,
-      actual = Json.decodeFromString(serializer, "\"cherry_pie\""),
+      expected = OrderStatus.Shipped,
+      actual = Json.decodeFromString(serializer, "\"Shipped\""),
+    )
+    assertEquals(
+      expected = OrderStatus.Unknown,
+      actual = Json.decodeFromString(serializer, "\"in_transit\""),
     )
   }
 
-  private fun encode(value: Fruit): String = Json.encodeToString(FruitSerializer, value)
+  private fun encode(value: OrderStatus): String = Json.encodeToString(StatusSerializer, value)
 
-  private fun decode(value: String): Fruit = Json.decodeFromString(FruitSerializer, "\"$value\"")
+  private fun decode(value: String): OrderStatus =
+    Json.decodeFromString(StatusSerializer, "\"$value\"")
 }
