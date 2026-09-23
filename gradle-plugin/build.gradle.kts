@@ -48,7 +48,7 @@ val testRepoJars = configurations.dependencyScope("testRepoJars")
 
 val testRepoClasspath =
   configurations.resolvable("testRepoClasspath") {
-    extendsFrom(testRepoJars.get())
+    extendsFrom(testRepoJars)
     isTransitive = false
     attributes {
       attribute(CATEGORY_ATTRIBUTE, objects.named(LIBRARY))

@@ -18,7 +18,7 @@ val jdkVersion = providers.fileContents(javaFile).asText.map { it.trim().toInt()
 
 // One target per backend, all of which run on a Linux CI machine
 kotlin {
-  jvmToolchain(jdkVersion.get())
+  jvmToolchain { languageVersion.set(jdkVersion.map(JavaLanguageVersion::of)) }
 
   jvm()
   js { nodejs() }
