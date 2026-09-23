@@ -137,6 +137,25 @@ class FallbackEnumSerializerTest {
   }
 
   @Test
+  fun `fails to decode when alternative names clash`() {
+    val serializer =
+      FallbackEnumSerializer<OrderStatus>(
+        serialName = "OrderStatus",
+        fallbackValue = Unknown,
+        valueAnnotations = mapOf(OrderStatus.Pending to listOf(JsonNames("pending"))),
+      )
+    val json = Json { decodeEnumsCaseInsensitive = true }
+    val error =
+      assertFailsWith<SerializationException> { json.decodeFromString(serializer, "\"Pending\"") }
+
+    assertEquals(
+      expected = true,
+      actual = error.message?.startsWith("The suggested name 'pending'"),
+      message = error.message,
+    )
+  }
+
+  @Test
   fun `descriptor has annotations`() {
     val serializer =
       FallbackEnumSerializer<OrderStatus>(
