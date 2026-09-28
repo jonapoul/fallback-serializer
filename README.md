@@ -3,6 +3,18 @@
 [![Latest release on Maven Central](https://img.shields.io/maven-central/v/dev.jonpoulton.fallbackserializer/dev.jonpoulton.fallbackserializer.gradle.plugin)](https://central.sonatype.com/artifact/dev.jonpoulton.fallbackserializer/dev.jonpoulton.fallbackserializer.gradle.plugin)
 [![License](https://img.shields.io/github/license/jonapoul/fallback-serializer)](LICENSE.txt)
 
+![JVM](https://img.shields.io/badge/-jvm-DB413D)
+![JS](https://img.shields.io/badge/-js-F8DB5D)
+![WasmJS](https://img.shields.io/badge/-wasmJs-624FE8)
+![WasmWASI](https://img.shields.io/badge/-wasmWasi-624FE8)
+![Android Native](https://img.shields.io/badge/-androidNative-6EDB8D)
+![iOS](https://img.shields.io/badge/-ios-CDCDCD)
+![macOS](https://img.shields.io/badge/-macos-111111)
+![tvOS](https://img.shields.io/badge/-tvos-808080)
+![watchOS](https://img.shields.io/badge/-watchos-C0C0C0)
+![Linux](https://img.shields.io/badge/-linux-2D3F6C)
+![Windows](https://img.shields.io/badge/-windows-4D76CD)
+
 A Kotlin compiler plugin which works alongside [kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization) to make enum decoding more forgiving. Mark one enum entry with `@Fallback` and any unknown name in your input data will decode to it, instead of throwing `SerializationException`.
 
 ## When is this useful?
