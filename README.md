@@ -20,7 +20,7 @@
 ![Linux](https://img.shields.io/badge/-linux-2D3F6C)
 ![Windows](https://img.shields.io/badge/-windows-4D76CD)
 
-A Kotlin compiler plugin which works alongside [kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization) to make enum decoding forwards-compatible. Mark one enum entry with a `@Fallback` annotation and any unknown name in your input data will decode to it, instead of throwing `SerializationException`.
+A Kotlin compiler plugin which works alongside [kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization) to make enum decoding forward-compatible. Mark one enum entry with a `@Fallback` annotation and any unknown name in your input data will decode to it, instead of throwing `SerializationException`.
 
 ## When is this useful?
 
@@ -44,9 +44,9 @@ data class Order(
 
 This works swimmingly!
 
-But then in the future, the server receives an update to add a new enum value to its schema: `Refunded`. You can update your clients to support that new value, but older clients without that update will still attempt to deserialize `Order` objects with the previous form of the enum. As such, they will fail decoding and discard the entire message, even if the order status was only a tiny part of the data!
+Later, the server adds a new value: `Refunded`. You can update your clients to support that new value, but older clients without that update will still attempt to deserialize `Order` objects with the previous form of the enum. As such, they will fail decoding and discard the entire message, even if the order status was only a tiny part of the data!
 
-Fallback Serializer allows you to define a "fallback value", which the generated serializer will default to if it fails to decode any other known value:
+Add a `@Fallback` entry to handle this:
 
 ```diff
  @Serializable
@@ -74,6 +74,8 @@ Order(id = 123456L, status = OrderStatus.Unknown)
 ```
 
 and you can decide how to handle that case safely in your app logic.
+
+The same applies when an older version of your app reads data that a newer version wrote, like a local file that's still there after a downgrade.
 
 ## Setup
 
@@ -150,6 +152,7 @@ Enums without a `@Fallback` entry are left alone.
 
 - `@JsonNames` and other `@SerialInfo` annotations on the enum and its entries still work as expected.
 - With multiplatform `expect`/`actual` enums, only the actual enum needs the `@Fallback` entry. Decoding from common code still uses the fallback.
+- kotlinx.serialization's `coerceInputValues` does something similar, but it only covers class properties that have a default value. This plugin is applied to the enum type, so it works anywhere the enum is decoded, including top-level values and collections. One unknown value in a list doesn't stop the rest of it from decoding.
 - With `coerceInputValues = true`, `Json` swaps an unknown value for the property's default before this plugin sees it. So a property with a default gets that default, and one without a default gets the fallback entry:
 
 ```kotlin
@@ -173,8 +176,6 @@ The plugin includes a number of built-in usage checkers which make sure the `@Fa
 - `@Fallback` is used anywhere besides an enum entry.
 
 If you find any other cases that should be caught, please [open an issue](https://github.com/jonapoul/fallback-serializer/issues).
-
-kotlinx.serialization's `coerceInputValues` performs a similar function, but it only covers class properties that have a default value. This plugin is applied to the enum type, so it works anywhere the enum is decoded, including top-level values and collections. One unknown value in a list doesn't stop the rest of it from decoding.
 
 ## License
 
