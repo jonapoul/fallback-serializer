@@ -1,4 +1,9 @@
-# Fallback Serializer
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/preview-dark.png">
+    <img src="docs/preview-light.png" alt="@Fallback: an enum value your code has never seen decodes to your fallback entry, not an exception" width="100%">
+  </picture>
+</p>
 
 [![Latest release on Maven Central](https://img.shields.io/maven-central/v/dev.jonpoulton.fallbackserializer/dev.jonpoulton.fallbackserializer.gradle.plugin)](https://central.sonatype.com/artifact/dev.jonpoulton.fallbackserializer/dev.jonpoulton.fallbackserializer.gradle.plugin)
 [![License](https://img.shields.io/github/license/jonapoul/fallback-serializer)](LICENSE.txt)
@@ -15,16 +20,62 @@
 ![Linux](https://img.shields.io/badge/-linux-2D3F6C)
 ![Windows](https://img.shields.io/badge/-windows-4D76CD)
 
-A Kotlin compiler plugin which works alongside [kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization) to make enum decoding more forgiving. Mark one enum entry with `@Fallback` and any unknown name in your input data will decode to it, instead of throwing `SerializationException`.
+A Kotlin compiler plugin which works alongside [kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization) to make enum decoding forward-compatible. Mark one enum entry with a `@Fallback` annotation and any unknown name in your input data will decode to it, instead of throwing `SerializationException`.
 
 ## When is this useful?
 
-When the data you decode can contain enum values your code doesn't know about yet. For example:
+Say you are building a client app to work with the schema of some upstream service. You receive a schema with an enum type, so you model it like below:
 
-- A server or another service starts sending a new enum value before every client knows about it.
-- An older version of your app reads data that a newer version wrote, like a local file that's still there after a downgrade.
+```kotlin
+@Serializable
+enum class OrderStatus {
+  Pending,
+  Shipped,
+  Cancelled,
+}
 
-kotlinx.serialization's `coerceInputValues` does something similar, but it only covers class properties that have a default value. This plugin is applied to the enum type, so it works anywhere the enum is decoded, including top-level values and collections. One unknown value in a list doesn't stop the rest of it from decoding.
+@Serializable
+data class Order(
+  val id: Long,
+  val status: OrderStatus,
+  // ...
+)
+```
+
+This works swimmingly!
+
+Later, the server adds a new value: `Refunded`. You can update your clients to support that new value, but older clients without that update will still attempt to deserialize `Order` objects with the previous form of the enum. As such, they will fail decoding and discard the entire message, even if the order status was only a tiny part of the data!
+
+Add a `@Fallback` entry to handle this:
+
+```diff
+ @Serializable
+ enum class OrderStatus {
+   Pending,
+   Shipped,
+   Cancelled,
++  @Fallback Unknown,
+ }
+```
+
+Now if you receive an otherwise-incompatible response:
+
+```json
+{
+  "id": 123456,
+  "status": "Refunded"
+}
+```
+
+you'll decode to:
+
+```kotlin
+Order(id = 123456L, status = OrderStatus.Unknown)
+```
+
+and you can decide how to handle that case safely in your app logic.
+
+The same applies when an older version of your app reads data that a newer version wrote, like a local file that's still there after a downgrade.
 
 ## Setup
 
@@ -101,6 +152,7 @@ Enums without a `@Fallback` entry are left alone.
 
 - `@JsonNames` and other `@SerialInfo` annotations on the enum and its entries still work as expected.
 - With multiplatform `expect`/`actual` enums, only the actual enum needs the `@Fallback` entry. Decoding from common code still uses the fallback.
+- kotlinx.serialization's `coerceInputValues` does something similar, but it only covers class properties that have a default value. This plugin is applied to the enum type, so it works anywhere the enum is decoded, including top-level values and collections. One unknown value in a list doesn't stop the rest of it from decoding.
 - With `coerceInputValues = true`, `Json` swaps an unknown value for the property's default before this plugin sees it. So a property with a default gets that default, and one without a default gets the fallback entry:
 
 ```kotlin
