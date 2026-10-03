@@ -20,7 +20,7 @@ xmlutil = { module = "io.github.pdvrieze.xmlutil:serialization", version = "1.0.
 
 [plugins]
 blueprint-test = { id = "dev.jonpoulton.blueprint.test", version.ref = "blueprint" }
-buildconfig = { id = "com.github.gmazzo.buildconfig", version = "6.1.1" }
+buildconfig = { id = "com.github.gmazzo.buildconfig", version = "6.1.2" }
 detekt = { id = "dev.detekt", version = "2.0.0-alpha.6" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
