@@ -55,6 +55,8 @@ dependencies {
   testRuntimeOnly(kotlin("annotations-jvm", testKotlinVersion))
   testRuntimeOnly(kotlin("reflect", testKotlinVersion))
   testRuntimeOnly(kotlin("script-runtime", testKotlinVersion))
+  // The test framework looks up the scripting jars through KotlinJars since 2.5.0-dev-10106
+  testRuntimeOnly(kotlin("scripting-jvm", testKotlinVersion))
   testRuntimeOnly(kotlin("test", testKotlinVersion))
 }
 
