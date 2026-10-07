@@ -55,6 +55,7 @@ dependencies {
   testRuntimeOnly(kotlin("annotations-jvm", testKotlinVersion))
   testRuntimeOnly(kotlin("reflect", testKotlinVersion))
   testRuntimeOnly(kotlin("script-runtime", testKotlinVersion))
+  testRuntimeOnly(kotlin("scripting-jvm", testKotlinVersion))
   testRuntimeOnly(kotlin("test", testKotlinVersion))
 }
 
