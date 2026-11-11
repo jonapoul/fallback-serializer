@@ -1,9 +1,4 @@
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/preview-dark.png">
-    <img src="docs/preview-light.png" alt="@Fallback: an enum value your code has never seen decodes to your fallback entry, not an exception" width="100%">
-  </picture>
-</p>
+# fallback-serializer
 
 [![Latest release on Maven Central](https://img.shields.io/maven-central/v/dev.jonpoulton.fallbackserializer/dev.jonpoulton.fallbackserializer.gradle.plugin)](https://central.sonatype.com/artifact/dev.jonpoulton.fallbackserializer/dev.jonpoulton.fallbackserializer.gradle.plugin)
 [![License](https://img.shields.io/github/license/jonapoul/fallback-serializer)](LICENSE.txt)
