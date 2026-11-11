@@ -6,7 +6,10 @@ import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar.ExtensionStorage
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
+import org.jetbrains.kotlin.test.builders.RegisteredDirectivesBuilder
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
+import org.jetbrains.kotlin.test.directives.model.SimpleDirective
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.RuntimeClasspathProvider
@@ -29,6 +32,21 @@ enum class PluginOrder {
 fun TestConfigurationBuilder.configurePlugin(order: PluginOrder = PluginOrder.SerializationFirst) {
   useConfigurators({ PluginRegistrarConfigurator(it, order) }, ::TestLibrariesConfigurator)
   useCustomRuntimeClasspathProviders(::TestLibrariesClasspathProvider)
+}
+
+// Avoids loading R8 from the classpath. Kotlin 2.5.20 moves the directive from
+// CodegenTestDirectives to JvmCodegenDirectives, so it's looked up by name.
+fun RegisteredDirectivesBuilder.ignoreDexing() {
+  val directive =
+    listOf("JvmCodegenDirectives", "CodegenTestDirectives").firstNotNullOfOrNull { name ->
+      val container =
+        runCatching { Class.forName("org.jetbrains.kotlin.test.directives.$name") }
+          .getOrNull()
+          ?.getField("INSTANCE")
+          ?.get(null) as? DirectivesContainer
+      container?.get("IGNORE_DEXING") as? SimpleDirective
+    } ?: error("No IGNORE_DEXING directive")
+  +directive
 }
 
 // Registers our plugin alongside kotlinx.serialization's, as a consumer's build would

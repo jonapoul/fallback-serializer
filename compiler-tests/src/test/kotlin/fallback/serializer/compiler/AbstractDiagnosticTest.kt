@@ -1,7 +1,6 @@
 package fallback.serializer.compiler
 
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_DEXING
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.RENDER_DIAGNOSTICS_FULL_TEXT
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.DISABLE_GENERATED_FIR_TAGS
@@ -33,7 +32,7 @@ open class AbstractDiagnosticTest : AbstractPhasedJvmDiagnosticLightTreeTest() {
       defaultDirectives {
         +FULL_JDK
         +WITH_STDLIB
-        +IGNORE_DEXING // Avoids loading R8 from the classpath
+        ignoreDexing()
         +DISABLE_GENERATED_FIR_TAGS
         if (isFullTextChecked) +RENDER_DIAGNOSTICS_FULL_TEXT
 
