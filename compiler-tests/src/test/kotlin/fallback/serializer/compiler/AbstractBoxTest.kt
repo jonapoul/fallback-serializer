@@ -3,7 +3,6 @@ package fallback.serializer.compiler
 import org.jetbrains.kotlin.test.backend.handlers.NoIrCompilationErrorsHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_DEXING
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.FULL_JDK
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeBlackBoxCodegenTest
@@ -28,7 +27,7 @@ open class AbstractBoxTest : AbstractFirLightTreeBlackBoxCodegenTest() {
       defaultDirectives {
         +FULL_JDK
         +WITH_STDLIB
-        +IGNORE_DEXING // Avoids loading R8 from the classpath
+        ignoreDexing()
       }
 
       // Errors in the plugin's backend should fail the test without running box()
