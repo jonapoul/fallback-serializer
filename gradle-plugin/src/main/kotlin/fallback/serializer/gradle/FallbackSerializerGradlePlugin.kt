@@ -42,6 +42,11 @@ public class FallbackSerializerGradlePlugin : KotlinCompilerPluginSupportPlugin 
     kotlinCompilation: KotlinCompilation<*>
   ): Provider<List<SubpluginOption>> {
     kotlinCompilation.defaultSourceSet.dependencies { implementation("$GROUP:runtime:$VERSION") }
+
+    // @Fallback needs this opt-in, so using it without this plugin fails to compile. Set on the
+    // source sets too, so the IDE sees it.
+    kotlinCompilation.allKotlinSourceSets.forEach { it.languageSettings.optIn(OPT_IN_MARKER) }
+    kotlinCompilation.compileTaskProvider.configure { it.compilerOptions.optIn.add(OPT_IN_MARKER) }
     return kotlinCompilation.target.project.provider { emptyList() }
   }
 
@@ -51,6 +56,7 @@ public class FallbackSerializerGradlePlugin : KotlinCompilerPluginSupportPlugin 
     SubpluginArtifact(groupId = GROUP, artifactId = "compiler", version = VERSION)
 
   private companion object {
+    const val OPT_IN_MARKER = "fallback.serializer.FallbackPluginApplied"
     const val SERIALIZATION_PLUGIN_ID = "org.jetbrains.kotlin.plugin.serialization"
     const val SKIP_VERSION_CHECK_PROPERTY = "fallback.skipKotlinVersionCheck"
   }

@@ -12,3 +12,6 @@ public class fallback/serializer/FallbackEnumSerializer : kotlinx/serialization/
 	public fun toString ()Ljava/lang/String;
 }
 
+public abstract interface annotation class fallback/serializer/FallbackPluginApplied : java/lang/annotation/Annotation {
+}
+

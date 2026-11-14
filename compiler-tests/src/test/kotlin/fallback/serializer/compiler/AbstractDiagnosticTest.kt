@@ -21,13 +21,16 @@ open class AbstractDiagnosticTest : AbstractPhasedJvmDiagnosticLightTreeTest() {
   protected open val pluginOrder: PluginOrder
     get() = PluginOrder.SerializationFirst
 
+  protected open val hasFallbackPlugin: Boolean
+    get() = true
+
   override fun createKotlinStandardLibrariesPathProvider(): KotlinStandardLibrariesPathProvider =
     EnvironmentBasedStandardLibrariesPathProvider
 
   override fun configure(builder: TestConfigurationBuilder): Unit =
     with(builder) {
       super.configure(builder)
-      configurePlugin(pluginOrder)
+      configurePlugin(pluginOrder, hasFallbackPlugin)
 
       defaultDirectives {
         +FULL_JDK

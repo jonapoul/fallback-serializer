@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.test.builders.RegisteredDirectivesBuilder
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.OPT_IN
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.SimpleDirective
 import org.jetbrains.kotlin.test.model.TestModule
@@ -29,10 +30,23 @@ enum class PluginOrder {
   FallbackFirst,
 }
 
-fun TestConfigurationBuilder.configurePlugin(order: PluginOrder = PluginOrder.SerializationFirst) {
-  useConfigurators({ PluginRegistrarConfigurator(it, order) }, ::TestLibrariesConfigurator)
+// Without our plugin, only kotlinx.serialization's runs, as when our runtime is added without the
+// Gradle plugin
+fun TestConfigurationBuilder.configurePlugin(
+  order: PluginOrder = PluginOrder.SerializationFirst,
+  hasFallbackPlugin: Boolean = true,
+) {
+  useConfigurators(
+    { PluginRegistrarConfigurator(it, order, hasFallbackPlugin) },
+    ::TestLibrariesConfigurator,
+  )
   useCustomRuntimeClasspathProviders(::TestLibrariesClasspathProvider)
+
+  // The Gradle plugin opts in to this alongside adding our compiler plugin
+  if (hasFallbackPlugin) defaultDirectives { OPT_IN.with(FALLBACK_OPT_IN_MARKER) }
 }
+
+private const val FALLBACK_OPT_IN_MARKER = "fallback.serializer.FallbackPluginApplied"
 
 // Avoids loading R8 from the classpath. Kotlin 2.5.20 moves the directive from
 // CodegenTestDirectives to JvmCodegenDirectives, so it's looked up by name.
@@ -50,8 +64,11 @@ fun RegisteredDirectivesBuilder.ignoreDexing() {
 }
 
 // Registers our plugin alongside kotlinx.serialization's, as a consumer's build would
-class PluginRegistrarConfigurator(testServices: TestServices, private val order: PluginOrder) :
-  EnvironmentConfigurator(testServices) {
+class PluginRegistrarConfigurator(
+  testServices: TestServices,
+  private val order: PluginOrder,
+  private val hasFallbackPlugin: Boolean,
+) : EnvironmentConfigurator(testServices) {
   override fun ExtensionStorage.registerCompilerExtensions(
     module: TestModule,
     configuration: CompilerConfiguration,
@@ -62,8 +79,11 @@ class PluginRegistrarConfigurator(testServices: TestServices, private val order:
     if (order == PluginOrder.SerializationFirst) registerFallback(configuration)
   }
 
-  private fun ExtensionStorage.registerFallback(configuration: CompilerConfiguration) =
-    with(FallbackCompilerPluginRegistrar()) { registerExtensions(configuration) }
+  private fun ExtensionStorage.registerFallback(configuration: CompilerConfiguration) {
+    if (hasFallbackPlugin) {
+      with(FallbackCompilerPluginRegistrar()) { registerExtensions(configuration) }
+    }
+  }
 }
 
 class TestLibrariesConfigurator(testServices: TestServices) :
