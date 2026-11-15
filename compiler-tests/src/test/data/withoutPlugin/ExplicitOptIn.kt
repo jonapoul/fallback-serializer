@@ -1,4 +1,3 @@
-// RUN_PIPELINE_TILL: BACKEND
 // Opting in by hand compiles, for builds that add the compiler plugin without Gradle
 @file:OptIn(FallbackPluginApplied::class)
 
