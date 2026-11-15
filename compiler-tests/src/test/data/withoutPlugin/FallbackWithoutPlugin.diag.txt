@@ -1,0 +1,1 @@
+/FallbackWithoutPlugin.kt:7:4: error: @Fallback does nothing without the compiler plugin. Apply the dev.jonpoulton.fallbackserializer Gradle plugin.

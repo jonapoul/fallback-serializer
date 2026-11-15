@@ -169,6 +169,7 @@ The plugin includes a number of built-in usage checkers which make sure the `@Fa
 - An actual enum has no `@Fallback` entry, but its expect enum does.
 - An expect enum and its actual enum mark different entries with `@Fallback`.
 - `@Fallback` is used anywhere besides an enum entry.
+- `@Fallback` is used without the Gradle plugin applied, which would otherwise ignore it. The runtime marks `@Fallback` with `@FallbackPluginApplied`, an opt-in that the Gradle plugin enables. If you add the compiler plugin some other way, pass `-opt-in=fallback.serializer.FallbackPluginApplied` to the compiler too.
 
 If you find any other cases that should be caught, please [open an issue](https://github.com/jonapoul/fallback-serializer/issues).
 

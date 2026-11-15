@@ -10,6 +10,10 @@ open annotation class fallback.serializer/Fallback : kotlin/Annotation { // fall
     constructor <init>() // fallback.serializer/Fallback.<init>|<init>(){}[0]
 }
 
+open annotation class fallback.serializer/FallbackPluginApplied : kotlin/Annotation { // fallback.serializer/FallbackPluginApplied|null[0]
+    constructor <init>() // fallback.serializer/FallbackPluginApplied.<init>|<init>(){}[0]
+}
+
 open class <#A: kotlin/Enum<#A>> fallback.serializer/FallbackEnumSerializer : kotlinx.serialization/KSerializer<#A> { // fallback.serializer/FallbackEnumSerializer|null[0]
     constructor <init>(kotlin/String, kotlin/Array<#A>, kotlin.collections/Map<#A, kotlin/String>, #A, kotlin.collections/Map<#A, kotlin.collections/List<kotlin/Annotation>> = ..., kotlin.collections/List<kotlin/Annotation> = ...) // fallback.serializer/FallbackEnumSerializer.<init>|<init>(kotlin.String;kotlin.Array<1:0>;kotlin.collections.Map<1:0,kotlin.String>;1:0;kotlin.collections.Map<1:0,kotlin.collections.List<kotlin.Annotation>>;kotlin.collections.List<kotlin.Annotation>){}[0]
 
