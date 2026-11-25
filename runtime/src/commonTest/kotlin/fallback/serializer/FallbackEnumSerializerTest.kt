@@ -3,7 +3,6 @@ package fallback.serializer
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
-import kotlin.test.assertIs
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.SerializationException
@@ -107,13 +106,12 @@ class FallbackEnumSerializerTest {
         fallbackValue = OrderStatus.Unknown,
       )
     val error =
-      assertFailsWith<SerializationException> {
+      assertFailsWith<IllegalStateException> {
         Json.encodeToString(serializer, OrderStatus.Shipped)
       }
-    val cause = assertIs<IllegalStateException>(error.cause)
     assertEquals(
       expected = "Shipped is not a valid enum OrderStatus, must be one of [Pending, Unknown]",
-      actual = cause.message,
+      actual = error.message,
     )
   }
 
