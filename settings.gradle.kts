@@ -50,7 +50,7 @@ develocity.buildScan {
 include(
   ":compiler",
   ":compiler-compat",
-  ":compiler-compat:k2220",
+  ":compiler-compat:k230",
   ":compiler-compat:k240",
   ":compiler-tests",
   ":gradle-plugin",

@@ -1,7 +1,7 @@
 package fallback.serializer.compiler
 
 import fallback.serializer.compiler.compat.CompatContext
-import fallback.serializer.compiler.compat.k2220.K2220Compat
+import fallback.serializer.compiler.compat.k230.K230Compat
 import fallback.serializer.compiler.compat.k240.K240Compat
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 
@@ -17,5 +17,5 @@ internal fun compatFor(version: String): CompatContext {
     Regex("""^(\d+)\.(\d+)\.(\d+)""").find(version)?.destructured
       ?: error("Unknown Kotlin compiler version '$version'")
   val kotlin = KotlinVersion(major = major.toInt(), minor = minor.toInt(), patch = patch.toInt())
-  return if (kotlin >= Kotlin240) K240Compat else K2220Compat
+  return if (kotlin >= Kotlin240) K240Compat else K230Compat
 }

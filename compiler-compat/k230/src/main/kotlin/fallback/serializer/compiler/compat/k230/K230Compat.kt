@@ -1,4 +1,4 @@
-package fallback.serializer.compiler.compat.k2220
+package fallback.serializer.compiler.compat.k230
 
 import fallback.serializer.compiler.compat.CompatContext
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
@@ -18,8 +18,8 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
-// Kotlin 2.2.20 to 2.3.x
-object K2220Compat : CompatContext {
+// Kotlin 2.3.x
+object K230Compat : CompatContext {
   override fun registerExtensions(
     storage: ExtensionStorage,
     fir: FirExtensionRegistrar,
