@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
-import org.jetbrains.kotlin.fir.declarations.getKClassArgument
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassLikeSymbol
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
@@ -34,7 +33,9 @@ internal object FallbackSerializableChecker : FirClassChecker(Common) {
       when {
         !hasFallback -> null
         annotation != null ->
-          CUSTOM_SERIALIZER.takeIf { annotation.getKClassArgument(Names.With) != null }
+          CUSTOM_SERIALIZER.takeIf {
+            compat.getKClassArgument(annotation, Names.With, context.session) != null
+          }
         declaration.hasMetaSerializableAnnotation() -> null
         else -> MISSING_SERIALIZABLE
       }

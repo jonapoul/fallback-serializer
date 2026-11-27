@@ -1,6 +1,5 @@
 package fallback.serializer.compiler
 
-import org.jetbrains.kotlin.test.backend.handlers.NoIrCompilationErrorsHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
@@ -31,6 +30,6 @@ open class AbstractBoxTest : AbstractFirLightTreeBlackBoxCodegenTest() {
       }
 
       // Errors in the plugin's backend should fail the test without running box()
-      configureIrHandlersStep { useHandlers(::NoIrCompilationErrorsHandler) }
+      configureIrHandlersStep { useHandlers(::noIrCompilationErrorsHandler) }
     }
 }

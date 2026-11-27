@@ -83,7 +83,7 @@ internal class FallbackIrGenerationExtension : IrGenerationExtension {
         enumClass.functions.single { it.name == Names.Values && it.parameters.isEmpty() }
 
       val serializerBaseClass =
-        checkNotNull(pluginContext.finderForBuiltins().findClass(ClassIds.FallbackEnumSerializer))
+        checkNotNull(compat.findClass(pluginContext, ClassIds.FallbackEnumSerializer))
       val baseConstructor = checkNotNull(serializerBaseClass.owner.primaryConstructor)
 
       +irDelegatingConstructorCall(baseConstructor).apply {
@@ -126,8 +126,7 @@ internal class FallbackIrGenerationExtension : IrGenerationExtension {
     valueType: IrType,
     entries: List<Pair<IrExpression, IrExpression>>,
   ): IrExpression {
-    val finder = pluginContext.finderForBuiltins()
-    val pairClass = checkNotNull(finder.findClass(ClassIds.Pair)).owner
+    val pairClass = checkNotNull(compat.findClass(pluginContext, ClassIds.Pair)).owner
     val pairConstructor = checkNotNull(pairClass.primaryConstructor).symbol
     val pairType = pairClass.typeWith(keyType, valueType)
     val pairs = entries.map { (key, value) ->
@@ -140,7 +139,7 @@ internal class FallbackIrGenerationExtension : IrGenerationExtension {
     }
 
     val mapOf =
-      finder.findFunctions(MapOfCallableId).single {
+      compat.findFunctions(pluginContext, MapOfCallableId).single {
         it.owner.parameters.singleOrNull()?.varargElementType != null
       }
     return irCall(mapOf, pluginContext.irBuiltIns.mapClass.typeWith(keyType, valueType)).apply {
@@ -157,7 +156,7 @@ internal class FallbackIrGenerationExtension : IrGenerationExtension {
     elements: List<IrExpression>,
   ): IrExpression {
     val listOf =
-      pluginContext.finderForBuiltins().findFunctions(ListOfCallableId).single {
+      compat.findFunctions(pluginContext, ListOfCallableId).single {
         it.owner.parameters.singleOrNull()?.varargElementType != null
       }
     return irCall(listOf, pluginContext.irBuiltIns.listClass.typeWith(elementType)).apply {
@@ -169,7 +168,8 @@ internal class FallbackIrGenerationExtension : IrGenerationExtension {
   // Copies of the annotations that kotlinx.serialization would keep in the descriptor
   @OptIn(UnsafeDuringIrConstructionAPI::class)
   private fun IrMutableAnnotationContainer.serialInfoAnnotations(): List<IrExpression> =
-    annotations
+    compat
+      .annotations(this)
       .filter { annotation ->
         FqNames.SerialInfoMarkers.any { annotation.type.classOrFail.owner.hasAnnotation(it) }
       }
@@ -177,7 +177,8 @@ internal class FallbackIrGenerationExtension : IrGenerationExtension {
 
   // Not getAnnotationArgumentValue, which is inline and reads arguments differently before 2.4.20
   private fun IrMutableAnnotationContainer.serialName(): String? {
-    val annotation = annotations.firstOrNull { it.type.classFqName == FqNames.SerialName }
+    val annotation =
+      compat.annotations(this).firstOrNull { it.type.classFqName == FqNames.SerialName }
     return (annotation?.arguments?.firstOrNull() as? IrConst)?.value as? String
   }
 }

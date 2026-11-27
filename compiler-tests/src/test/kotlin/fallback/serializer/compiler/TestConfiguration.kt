@@ -6,11 +6,13 @@ import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar.ExtensionStorage
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
+import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.RegisteredDirectivesBuilder
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.OPT_IN
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.SimpleDirective
+import org.jetbrains.kotlin.test.model.BackendInputHandler
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.RuntimeClasspathProvider
@@ -61,6 +63,17 @@ fun RegisteredDirectivesBuilder.ignoreDexing() {
       container?.get("IGNORE_DEXING") as? SimpleDirective
     } ?: error("No IGNORE_DEXING directive")
   +directive
+}
+
+// Kotlin 2.4.0 renamed NoFir2IrCompilationErrorsHandler, so it's looked up by name
+@Suppress("UNCHECKED_CAST")
+fun noIrCompilationErrorsHandler(testServices: TestServices): BackendInputHandler<IrBackendInput> {
+  val handler =
+    listOf("NoIrCompilationErrorsHandler", "NoFir2IrCompilationErrorsHandler").firstNotNullOf {
+      runCatching { Class.forName("org.jetbrains.kotlin.test.backend.handlers.$it") }.getOrNull()
+    }
+  return handler.getConstructor(TestServices::class.java).newInstance(testServices)
+    as BackendInputHandler<IrBackendInput>
 }
 
 // Registers our plugin alongside kotlinx.serialization's, as a consumer's build would
