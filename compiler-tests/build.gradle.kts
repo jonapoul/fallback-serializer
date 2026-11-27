@@ -89,6 +89,11 @@ tasks.withType<Detekt>().configureEach {
 
 val isPinnedKotlin = testKotlinVersion == libs.versions.kotlin.get()
 
+// The test generator's API changes between Kotlin versions, and it only runs on the pinned one
+if (!isPinnedKotlin) {
+  tasks.named<KotlinJvmCompile>("compileTestKotlin") { exclude("**/GenerateTests.kt") }
+}
+
 // Other Kotlin versions format the .diag.txt files differently, and newer ones fail if the files
 // exist but aren't checked. So those versions run on a copy of the test data without them.
 val unpinnedRoot = layout.buildDirectory.dir("unpinned-test-root")

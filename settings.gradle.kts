@@ -47,4 +47,12 @@ develocity.buildScan {
   uploadInBackground = false
 }
 
-include(":compiler", ":compiler-tests", ":gradle-plugin", ":runtime")
+include(
+  ":compiler",
+  ":compiler-compat",
+  ":compiler-compat:k230",
+  ":compiler-compat:k240",
+  ":compiler-tests",
+  ":gradle-plugin",
+  ":runtime",
+)
