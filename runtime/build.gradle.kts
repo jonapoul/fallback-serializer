@@ -1,6 +1,8 @@
 @file:OptIn(ExperimentalWasmDsl::class)
 
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_3
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 
 plugins {
   alias(libs.plugins.kotlin.multiplatform)
@@ -9,6 +11,24 @@ plugins {
 }
 
 kotlin {
+  // So consumers on the oldest supported Kotlin version can read the runtime
+  compilerOptions {
+    languageVersion.set(KOTLIN_2_3)
+    apiVersion.set(KOTLIN_2_3)
+  }
+  targets.configureEach {
+    if (platformType != KotlinPlatformType.jvm && platformType != KotlinPlatformType.common) {
+      compilations.configureEach {
+        compileTaskProvider.configure {
+          compilerOptions.freeCompilerArgs.addAll(
+            "-Xklib-abi-version=2.3.0",
+            "-Xklib-ir-inliner=disabled",
+          )
+        }
+      }
+    }
+  }
+
   // Every target kotlinx.serialization supports, apart from ones deprecated in Kotlin
   androidNativeArm32()
   androidNativeArm64()
@@ -34,11 +54,13 @@ kotlin {
 
   sourceSets {
     commonMain.dependencies {
-      api(kotlin("stdlib"))
-      api(libs.kotlinx.serialization.core)
+      // Not published, since consumers on JS and Wasm need the stdlib to match their own compiler
+      compileOnly(kotlin("stdlib"))
+      api(libs.kotlinx.serialization.floor)
     }
 
     commonTest.dependencies {
+      implementation(kotlin("stdlib"))
       implementation(kotlin("test"))
       implementation(libs.kotlinx.serialization.cbor)
       implementation(libs.kotlinx.serialization.json)

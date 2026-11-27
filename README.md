@@ -104,7 +104,7 @@ The runtime supports every platform that kotlinx.serialization does.
 
 The plugin needs the K2 compiler. Compiler plugins use internal compiler APIs, so each release only supports the Kotlin versions it's tested against:
 
-| Plugin     | Kotlin                |
+| Fallback   | Kotlin                |
 |------------|-----------------------|
 | 0.1.0      | 2.4.20                |
 | 0.2.0      | 2.4.20                |

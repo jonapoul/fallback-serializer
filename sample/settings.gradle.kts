@@ -7,7 +7,11 @@ dependencyResolutionManagement {
     register("libs") {
       from(files("../gradle/libs.versions.toml"))
       // Pass -Pfallback.testKotlinVersion to build the sample with another Kotlin version
-      providers.gradleProperty("fallback.testKotlinVersion").orNull?.let { version("kotlin", it) }
+      providers.gradleProperty("fallback.testKotlinVersion").orNull?.let { kotlin ->
+        version("kotlin", kotlin)
+        // Kotlin 2.3 can't read kotlinx.serialization 1.12.0 and later on non-JVM targets
+        if (kotlin.startsWith("2.3.")) version("kotlinx-serialization", "1.10.0")
+      }
     }
   }
 }

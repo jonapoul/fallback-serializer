@@ -13,6 +13,7 @@ junit-launcher = { module = "org.junit.platform:junit-platform-launcher" }
 junit4 = { module = "junit:junit", version = "4.13.2" }
 kotlinx-serialization-cbor = { module = "org.jetbrains.kotlinx:kotlinx-serialization-cbor", version.ref = "kotlinx-serialization" }
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
+kotlinx-serialization-floor = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version = "1.9.0" } # oldest the runtime depends on. Kotlin 2.2 can't read 1.12.0 and later
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 kotlinx-serialization-protobuf = { module = "org.jetbrains.kotlinx:kotlinx-serialization-protobuf", version.ref = "kotlinx-serialization" }
 ktfmt = { module = "com.facebook:ktfmt", version = "0.64" } # only used in ktfmt.sh
